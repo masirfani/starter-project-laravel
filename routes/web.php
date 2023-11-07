@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Back\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,3 +17,15 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/sidebar', function () {
+    return view('templates.backend.main-sidebar');
+});
+Route::get('/navbar', function () {
+    return view('templates.backend.main-top-navbar');
+});
+Route::get('/sidenav', function () {
+    return view('templates.backend.main-sidebar-navbar');
+});
+
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');

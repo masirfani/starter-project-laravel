@@ -1,0 +1,55 @@
+<?php
+
+namespace App\Http\Controllers\Back;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class AuthController extends Controller
+{
+    function login(){
+        // dd(session('alert')['type']);
+        return view('auth.login');
+    }
+
+    function authentication(Request $request){
+        $validate = $request->validate([
+            'email'    => 'required',
+            'password' => 'required'
+        ]);
+    
+        if (Auth::attempt($validate)) {
+            $request->session()->regenerate();
+            return redirect()->intended('/dashboard');
+        }
+
+        return redirect()->route('auth.login')->with('alert', ["type" => "error", "text" => "email / password yang anda masukkan salah"]);
+    }
+
+    function register(){
+        return view('auth.register');
+    }
+
+    function store(Request $request){
+        $validate = $request->validate([
+            'name'     => 'required',
+            'email'    => 'required|unique:users',
+            'password' => 'required|min:8'
+        ]);
+
+        User::create($validate);
+
+        return redirect()->route('auth.login')
+        ->with('alert', ["type" => "success", "text" => "Selamat akun anda sudah terdaftar, silahkan login"]);
+    }
+
+
+    public function logout()
+    {
+        Auth::logout();
+        
+        return redirect()->route('auth.login');
+    }
+}

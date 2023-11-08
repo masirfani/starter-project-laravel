@@ -11,6 +11,11 @@
         type="image/png">
     <link rel="stylesheet" href="{{ asset('template-backend/assets/compiled/css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('template-backend/assets/compiled/css/app-dark.css') }}">
+    <link rel="stylesheet" href="{{ asset('template-backend/assets/extensions/sweetalert2/sweetalert2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template-backend/assets/compiled/css/iconly.css') }}">
+    <link rel="stylesheet" href="{{ asset('template-backend/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template-backend/assets/compiled/css/table-datatable-jquery.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
 </head>
 
 <body>
@@ -186,6 +191,27 @@
     <script src="{{ asset('template-backend/assets/static/js/components/dark.js') }}"></script>
     <script src="{{ asset('template-backend/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
     <script src="{{ asset('template-backend/assets/compiled/js/app.js') }}"></script>
+    <script src="{{ asset('template-backend/assets/extensions/sweetalert2/sweetalert2.min.js') }}"></script>
+    @if (session()->has('alert'))
+        <script>
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            });
+            
+            Toast.fire({
+                icon: "{{ session('alert')['type'] }}",
+                title: "{{ session('alert')['text'] }}"
+            });
+        </script>
+    @endif
 
 </body>
 </html>

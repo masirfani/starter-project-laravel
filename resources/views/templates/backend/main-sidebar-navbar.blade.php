@@ -15,7 +15,9 @@
     <link rel="stylesheet" href="{{ asset('template-backend/assets/compiled/css/iconly.css') }}">
     <link rel="stylesheet" href="{{ asset('template-backend/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template-backend/assets/compiled/css/table-datatable-jquery.css') }}">
+    <link rel="stylesheet" href="{{ asset('template-backend/assets/extensions/@fortawesome/fontawesome-free/css/all.min.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
+    @stack('style')
 </head>
 
 <body>
@@ -133,8 +135,8 @@
                                 <a href="#" data-bs-toggle="dropdown" aria-expanded="false">
                                     <div class="user-menu d-flex">
                                         <div class="user-name text-end me-3">
-                                            <h6 class="mb-0 text-gray-600">John Ducky</h6>
-                                            <p class="mb-0 text-sm text-gray-600">Administrator</p>
+                                            <h6 class="mb-0 text-gray-600">{{ auth()->user()->name ?? "-" }}</h6>
+                                            <p class="mb-0 text-sm text-gray-600">{{ auth()->user()->level ?? "-" }}</p>
                                         </div>
                                         <div class="user-img d-flex align-items-center">
                                             <div class="avatar avatar-md">
@@ -145,14 +147,14 @@
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton" style="min-width: 11rem;">
                                     <li>
-                                        <h6 class="dropdown-header">Hello, John!</h6>
+                                        <h6 class="dropdown-header">Hello, {{ auth()->user()->name ?? "-" }}</h6>
                                     </li>
-                                    <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-person me-2"></i> My
+                                    <li><a class="dropdown-item" href="{{ route('auth.profile') }}"><i class="icon-mid bi bi-person me-2"></i> My
                                             Profile</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-gear me-2"></i>
-                                            Settings</a></li>
-                                    <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-wallet me-2"></i>
-                                            Wallet</a></li>
+                                    {{-- <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-gear me-2"></i>
+                                            Settings</a></li> --}}
+                                    {{-- <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-wallet me-2"></i>
+                                            Wallet</a></li> --}}
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
@@ -188,10 +190,12 @@
         </div>
     </div>
 
+    <script src="{{ asset('template-backend/assets/extensions/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('template-backend/assets/static/js/components/dark.js') }}"></script>
     <script src="{{ asset('template-backend/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
     <script src="{{ asset('template-backend/assets/compiled/js/app.js') }}"></script>
     <script src="{{ asset('template-backend/assets/extensions/sweetalert2/sweetalert2.min.js') }}"></script>
+    @stack('script')
     @if (session()->has('alert'))
         <script>
             const Toast = Swal.mixin({
@@ -212,6 +216,8 @@
             });
         </script>
     @endif
+
+
 
 </body>
 </html>

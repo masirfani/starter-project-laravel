@@ -36,6 +36,8 @@ Route::get('/coba', function () {
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 
+Route::get('/profile', [AuthController::class, 'profile'])->name('auth.profile');
+Route::put('/profile', [AuthController::class, 'update'])->name('auth.update');
 Route::get('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/login', [AuthController::class, 'authentication'])->name('auth.authentication');
 

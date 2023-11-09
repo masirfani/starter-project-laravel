@@ -14,6 +14,10 @@ class AuthController extends Controller
         return view('auth.login');
     }
 
+    function profile(){
+        return view('auth.profile');
+    }
+
     function authentication(Request $request){
         $validate = $request->validate([
             'email'    => 'required',
@@ -43,6 +47,26 @@ class AuthController extends Controller
 
         return redirect()->route('auth.login')
         ->with('alert', ["type" => "success", "text" => "Selamat akun anda sudah terdaftar, silahkan login"]);
+    }
+
+    function update(Request $request){
+        // dd($request->all());
+        $validate = $request->validate([
+            'name'     => 'required',
+            'email'    => 'required|unique:users,email,'.Auth::user()->id,
+            'password' => 'nullable|min:8'
+        ]);
+
+        if (empty($request->password)) {
+            unset($validate['password']);
+        }else{
+            $validate['password'] = password_hash($request->password, PASSWORD_BCRYPT);
+        }
+
+        User::find(Auth::user()->id)->update($validate);
+
+        return redirect()->route('auth.profile')
+        ->with('alert', ["type" => "success", "text" => "Akun berhasil dirubah"]);
     }
 
 

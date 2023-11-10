@@ -61,7 +61,7 @@
                         <li class="sidebar-title">Menu</li>
 
                         <li class="sidebar-item  ">
-                            <a href="index.html" class='sidebar-link'>
+                            <a href="{{ route('dashboard') }}" class='sidebar-link'>
                                 <i class="bi bi-grid-fill"></i>
                                 <span>Dashboard</span>
                             </a>
@@ -140,7 +140,7 @@
                                         </div>
                                         <div class="user-img d-flex align-items-center">
                                             <div class="avatar avatar-md">
-                                                <img src="{{ asset('template-backend/assets/compiled/jpg/1.jpg') }}">
+                                                <img src="{{ asset('uploads/user/'.auth()->user()->picture) }}">
                                             </div>
                                         </div>
                                     </div>
@@ -158,7 +158,7 @@
                                     <li>
                                         <hr class="dropdown-divider">
                                     </li>
-                                    <li><a class="dropdown-item" href="#"><i class="icon-mid bi bi-box-arrow-left me-2"></i> Logout</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('auth.logout') }}"><i class="icon-mid bi bi-box-arrow-left me-2"></i> Logout</a></li>
                                 </ul>
                             </div>
                         </div>

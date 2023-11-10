@@ -54,13 +54,29 @@ class AuthController extends Controller
         $validate = $request->validate([
             'name'     => 'required',
             'email'    => 'required|unique:users,email,'.Auth::user()->id,
-            'password' => 'nullable|min:8'
+            'password' => 'nullable|min:8',
+            'picture' => 'nullable|image|mimes:jpg,png,jpeg',
         ]);
 
         if (empty($request->password)) {
             unset($validate['password']);
         }else{
             $validate['password'] = password_hash($request->password, PASSWORD_BCRYPT);
+        }
+
+        if (empty($request->picture)) {
+            unset($validate['picture']);
+        }else{
+
+            $file_path = public_path("uploads/user/".Auth::user()->picture);
+            if (file_exists($file_path) && Auth::user()->picture !== "default.png") {
+                unlink($file_path);
+            }
+
+            $file      = $request->picture;
+            $file_name = "p-".$request->email.".".$file->getClientOriginalExtension();
+            $file->move(public_path("uploads/user/"), $file_name);
+            $validate['picture'] = $file_name;
         }
 
         User::find(Auth::user()->id)->update($validate);

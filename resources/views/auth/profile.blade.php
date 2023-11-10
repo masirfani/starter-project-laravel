@@ -23,14 +23,14 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('auth.update') }}" method="POST">
+                <form action="{{ route('auth.update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method("PUT")
 
                     <div class="row">
                         <div class="col-md-12 d-flex justify-content-center mb-3">
                             <div class="avatar bg-warning me-3 edit-picture">
-                                <img src="{{ asset('template-backend/assets/compiled/jpg/3.jpg') }}" alt="profile-photo">
+                                <img src="{{ asset('uploads/user/'.auth()->user()->picture) }}" alt="profile-photo">
                                 <span class="avatar-status bg-warning text-light d-flex justify-content-center">
                                     <i class="fa fa-pencil-alt align-self-center"></i>
                                 </span>
@@ -62,10 +62,6 @@
                             <button class="btn btn-primary btn-register ms-auto w-100 mb-5">Save</button>
                         </div>
                     </div>
-
-
-
-
                 </form>
             </div>
         </div>

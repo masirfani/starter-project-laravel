@@ -3,9 +3,29 @@
 @section('title', 'Role')
 @section('heading', 'Role Management')
 @section('heading-right')
-    <button class="btn btn-success btn-sm add-btn"><i class="fa fa-plus"></i></button>
-    <button class="btn btn-dark btn-sm back-btn"><i class="fa fa-angle-left"></i></button>
+    <button class="btn btn-success btn-sm btn-add"><i class="fa fa-plus"></i></button>
+    <button class="btn btn-dark btn-sm btn-back"><i class="fa fa-angle-left"></i></button>
 @endsection
+
+@push('style')
+    <style>
+        .datatable tr th:last-child,th:first-child{
+            width: 1%;
+            white-space: nowrap;
+        }
+
+        .view-form{
+            display: none;
+        }
+        .view-detail{
+            display: none;
+        }
+
+        .btn-back{
+            display: none;
+        }
+    </style>
+@endpush
 
 @section('content')
 <div class="row view-data">
@@ -20,6 +40,8 @@
                             <th>Aksi</th>
                         </tr>
                     </thead>
+                    <tbody>
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -39,6 +61,27 @@
         </div>
     </div>
 </div>
+<div class="row view-detail">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body set-detail">
+                <div class="row">
+                    <div class="col-6">
+                        <b>Nama</b> 
+                        <p><span class="detail-name"></span></p>       
+                    </div>
+                    <div class="w-100"><hr></div>
+                    <div class="col-6"> 
+                        <p><small><b>Dibuat :</b> <span class="detail-created_on"></span></small></p>     
+                    </div>
+                    <div class="col-6">
+                        <p><small><b>Terakhir di edit :</b> <span class="detail-updated_on"></span></small></p>     
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 @endsection
 
 @push('script')
@@ -49,17 +92,17 @@
             $("[class*=view-]").hide();
             $(".view-"+view).show();
             if ($(".view-data").is(":hidden")) {
-                $(".add-btn").hide();
-                $(".back-btn").show();
+                $(".btn-add").hide();
+                $(".btn-back").show();
             }else{
-                $(".add-btn").show();
-                $(".back-btn").hide();
+                $(".btn-add").show();
+                $(".btn-back").hide();
             }
         }
-        $(".add-btn").click(function(){
+        $(".btn-add").click(function(){
             show_view("form");
         });
-        $(".back-btn").click(function(){
+        $(".btn-back").click(function(){
             show_view("data");
         });
 
@@ -74,10 +117,14 @@
                 url:  form.attr("action"),
                 type: form.attr("method"),
                 data: form.serialize(),
+                headers: {
+                    'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+                },
                 dataType: 'json',
                 success: function(data, status, xhr) {
                     $('#contentData').html(data);
                     show_msg(data, status);
+                    reload_table();
                 },
                 error: function(data, status, xhr){
                     show_msg(data, status);
@@ -90,8 +137,6 @@
                                 <p class="error-message text-danger mb-0">${errorMessages}</p>
                             `;
                             $('.view-form [name="'+see+'"]').after(pesan); 
-                            console.log(errorMessages);
-                            console.log($('[name="'+see+'"]'));
                         });
                     }
                 }
@@ -119,6 +164,10 @@
             
         }
 
+        function reload_table(){
+            $(".datatable").DataTable().ajax.reload();
+        }
+
         $('.datatable').DataTable({
             pagingType: 'simple',
             responsive: true,
@@ -130,25 +179,55 @@
                 "info": "Page _PAGE_ of _PAGES_",
                 "lengthMenu": "_MENU_ ",
                 "search": "",
-                "searchPlaceholder": "Search.."
+                "searchPlaceholder": "Cari sesuatu..."
             },
-            // processing: true,
-            // serverSide: true,
-            // ajax: {
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url:  "{{ route('role.index') }}",
+                type: 'GET'
+            },
+            columns: [
+                {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false},
+                {data: 'name', name: 'name'},
+                {data: 'action', name: 'action', orderable: false, searchable: false},
+            ]
+        });
 
-            //     type: 'POST',
-            //     headers: {
-            //         'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
-            //     }
-            // },
-            // columns: [
-            //     {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-            //     {data: 'code', name: 'code'},
-            //     {data: 'name', name: 'name'},
-            //     {data: 'status', name: 'status'},
-            //     {data: 'location', name: 'location'},
-            //     {data: 'action', name: 'action'},
-            // ]
+        $("body").on("click", ".btn-delete", function(){
+            let form = $(this).parents("form");
+            Swal.fire({
+                title: "Apakah anda yakin",
+                text: "Ingin menghapus data ini???",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#e74c3c",
+                cancelButtonColor: "#34495e",
+                confirmButtonText: "Iya",
+                cancelButtonText: "Tidak",
+            }).then((result) => {
+                ajax_crud(form);
+            });
+        });
+
+        $("body").on("click", ".btn-detail", function(){
+            show_view("detail");
+            $.ajax({
+                url:  'role/'+$(this).data("id"),
+                type: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+                },
+                dataType: 'json',
+                success: function(data, status, xhr) {
+                    Object.keys(data).forEach(function(key){
+                        $(".detail-"+key).html(data[key]);
+                    });
+                },
+                error: function(data, status, xhr){
+                    show_msg(data, status);
+                }
+            });
         });
     </script>
 @endpush

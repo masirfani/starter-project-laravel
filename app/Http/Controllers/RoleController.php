@@ -7,14 +7,35 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
+use Yajra\DataTables\DataTables;
 
 class RoleController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->ajax()) {
+            $data = Role::latest()->get();
+            return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('action', function($see){
+                $data = "
+                <form action='". route('role.destroy', $see->id) ."' method='DELETE'>
+                    <div class='d-flex gap-1'>
+                        <button type='button' data-id='$see->id' class='btn btn-info btn-sm btn-detail'><i class='bi bi-info'></i></button>
+                        <button type='button' data-id='$see->id' class='btn btn-warning btn-sm btn-edit'><i class='bi bi-pencil'></i></button>
+                        <button type='button' data-id='$see->id' class='btn btn-danger btn-sm btn-delete'><i class='bi bi-trash'></i></button>
+                        <button type='button' data-id='$see->id' class='btn btn-dark btn-sm btn-history'><i class='bi bi-clock-history'></i></button>
+                    </div>
+                </form>
+                ";
+                return $data;
+            })
+            ->rawColumns(['action'])
+            ->make(true);
+        }
         return view('backend.user-management.role');
     }
 
@@ -55,7 +76,10 @@ class RoleController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $data = Role::find($id);
+        $data->created_on = $data->created_at->diffForHumans();
+        $data->updated_on = $data->updated_at->diffForHumans();
+        return response()->json($data, 200);
     }
 
     /**
@@ -79,6 +103,11 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $data = Role::find($id);
+        $data->destroy($id);
+
+        return response()->json([
+            'message' => "Role <b><i>$data->name</i></b> berhasil dihapus"
+        ], 200);
     }
 }

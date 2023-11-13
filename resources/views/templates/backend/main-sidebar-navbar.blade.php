@@ -11,10 +11,10 @@
         type="image/png">
     <link rel="stylesheet" href="{{ asset('template-backend/assets/compiled/css/app.css') }}">
     <link rel="stylesheet" href="{{ asset('template-backend/assets/compiled/css/app-dark.css') }}">
-    <link rel="stylesheet" href="{{ asset('template-backend/assets/extensions/sweetalert2/sweetalert2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template-backend/assets/compiled/css/iconly.css') }}">
-    <link rel="stylesheet" href="{{ asset('template-backend/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('template-backend/assets/compiled/css/table-datatable-jquery.css') }}">
+    <link rel="stylesheet" href="{{ asset('template-backend/assets/extensions/sweetalert2/sweetalert2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="{{ asset('template-backend/assets') }}/compiled/css/table-datatable-jquery.css">
     <link rel="stylesheet" href="{{ asset('template-backend/assets/extensions/@fortawesome/fontawesome-free/css/all.min.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     @stack('style')
@@ -65,6 +65,20 @@
                                 <i class="bi bi-grid-fill"></i>
                                 <span>Dashboard</span>
                             </a>
+                        </li>
+
+                        <li class="sidebar-item  has-sub">
+                            <a href="#" class='sidebar-link'>
+                                <i class="bi bi-person-badge-fill"></i>
+                                <span>User Management</span>
+                            </a>
+
+                            <ul class="submenu ">
+
+                                <li class="submenu-item  ">
+                                    <a href="{{ route('role.index') }}" class="submenu-link">Role</a>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </div>
@@ -135,19 +149,19 @@
                                 <a href="#" data-bs-toggle="dropdown" aria-expanded="false">
                                     <div class="user-menu d-flex">
                                         <div class="user-name text-end me-3">
-                                            <h6 class="mb-0 text-gray-600">{{ auth()->user()->name ?? "-" }}</h6>
-                                            <p class="mb-0 text-sm text-gray-600">{{ auth()->user()->level ?? "-" }}</p>
+                                            <h6 class="mb-0 text-gray-600">{{ auth()->user()->name ?? '-' }}</h6>
+                                            <p class="mb-0 text-sm text-gray-600">{{ auth()->user()->level ?? '-' }}</p>
                                         </div>
                                         <div class="user-img d-flex align-items-center">
                                             <div class="avatar avatar-md">
-                                                <img src="{{ asset('uploads/user/'.auth()->user()->picture) }}">
+                                                <img src="{{ asset('uploads/user/' . auth()->user()->picture) }}">
                                             </div>
                                         </div>
                                     </div>
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton" style="min-width: 11rem;">
                                     <li>
-                                        <h6 class="dropdown-header">Hello, {{ auth()->user()->name ?? "-" }}</h6>
+                                        <h6 class="dropdown-header">Hello, {{ auth()->user()->name ?? '-' }}</h6>
                                     </li>
                                     <li><a class="dropdown-item" href="{{ route('auth.profile') }}"><i class="icon-mid bi bi-person me-2"></i> My
                                             Profile</a></li>
@@ -195,6 +209,9 @@
     <script src="{{ asset('template-backend/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
     <script src="{{ asset('template-backend/assets/compiled/js/app.js') }}"></script>
     <script src="{{ asset('template-backend/assets/extensions/sweetalert2/sweetalert2.min.js') }}"></script>
+    <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="{{ asset('template-backend/assets') }}/static/js/pages/datatables.js"></script>
     @stack('script')
     @if (session()->has('alert'))
         <script>
@@ -209,7 +226,7 @@
                     toast.addEventListener('mouseleave', Swal.resumeTimer)
                 }
             });
-            
+
             Toast.fire({
                 icon: "{{ session('alert')['type'] }}",
                 title: "{{ session('alert')['text'] }}"
@@ -220,4 +237,5 @@
 
 
 </body>
+
 </html>

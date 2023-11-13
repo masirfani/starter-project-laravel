@@ -6,6 +6,8 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -21,5 +23,14 @@ class DatabaseSeeder extends Seeder
             'email'    => 'admin@gmail.com',
             'password' => password_hash("admin123", PASSWORD_BCRYPT),
         ]);
+
+        // pembuatan role
+        $role = Role::create(['name' => 'writer']);
+        // pembuatan permision
+        $permission = Permission::create(['name' => 'edit articles']);
+
+        // mengkoneksikannya
+        $role->givePermissionTo($permission);
+        $permission->assignRole($role);
     }
 }

@@ -63,7 +63,7 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-                <form action="{{ route('role.store') }}" method="POST">
+                <form action="{{ route("$route.store") }}" method="POST">
                     @csrf
                     <label>Nama Role</label>
                     <input type="text" name="name" class="form-control" placeholder="Masukkan nama role...">
@@ -231,6 +231,8 @@
             ajax_crud($(this), 'edit');
         });
 
+
+        var columnConfigs = {!! $config_table !!};
         $('.datatable').DataTable({
             pagingType: 'simple',
             responsive: true,
@@ -247,14 +249,10 @@
             processing: true,
             serverSide: true,
             ajax: {
-                url:  "{{ route('role.index') }}",
+                url:  "{{ route("$route.index") }}",
                 type: 'GET'
             },
-            columns: [
-                {data: 'DT_RowIndex', name: 'DT_RowIndex', searchable: false},
-                {data: 'name', name: 'name'},
-                {data: 'action', name: 'action', orderable: false, searchable: false},
-            ]
+            columns: columnConfigs
         });
 
         $("body").on("click", ".btn-delete", function(){

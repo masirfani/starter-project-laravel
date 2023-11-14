@@ -16,6 +16,7 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
+        // get data table ajax
         if ($request->ajax()) {
             $data = Role::latest()->get();
             return DataTables::of($data)
@@ -27,7 +28,6 @@ class RoleController extends Controller
                         <button type='button' class='btn btn-info btn-sm btn-detail'><i class='bi bi-info'></i></button>
                         <button type='button' class='btn btn-warning btn-sm btn-edit'><i class='bi bi-pencil'></i></button>
                         <button type='button' class='btn btn-danger btn-sm btn-delete'><i class='bi bi-trash'></i></button>
-                        <button type='button' class='btn btn-dark btn-sm btn-history'><i class='bi bi-clock-history'></i></button>
                     </div>
                 </form>
                 ";
@@ -36,7 +36,17 @@ class RoleController extends Controller
             ->rawColumns(['action'])
             ->make(true);
         }
-        return view('backend.user-management.role');
+
+        $config_table = [
+            ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'searchable' => false],
+            ['data' => 'name', 'name' => 'name'],
+            ['data' => 'action', 'name' => 'action', 'orderable' => false, 'searchable' => false],
+        ];
+
+        return view('backend.user-management.role',[
+            "route" => "role",
+            "config_table" => json_encode($config_table)
+        ]);
     }
 
     /**

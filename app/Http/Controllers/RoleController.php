@@ -22,12 +22,12 @@ class RoleController extends Controller
             ->addIndexColumn()
             ->addColumn('action', function($see){
                 $data = "
-                <form action='". route('role.destroy', $see->id) ."' method='DELETE'>
+                <form action='". route('role.destroy', $see->id) ."' method='DELETE' data-action='role' data-id='$see->id'>
                     <div class='d-flex gap-1'>
-                        <button type='button' data-id='$see->id' class='btn btn-info btn-sm btn-detail'><i class='bi bi-info'></i></button>
-                        <button type='button' data-id='$see->id' class='btn btn-warning btn-sm btn-edit'><i class='bi bi-pencil'></i></button>
-                        <button type='button' data-id='$see->id' class='btn btn-danger btn-sm btn-delete'><i class='bi bi-trash'></i></button>
-                        <button type='button' data-id='$see->id' class='btn btn-dark btn-sm btn-history'><i class='bi bi-clock-history'></i></button>
+                        <button type='button' class='btn btn-info btn-sm btn-detail'><i class='bi bi-info'></i></button>
+                        <button type='button' class='btn btn-warning btn-sm btn-edit'><i class='bi bi-pencil'></i></button>
+                        <button type='button' class='btn btn-danger btn-sm btn-delete'><i class='bi bi-trash'></i></button>
+                        <button type='button' class='btn btn-dark btn-sm btn-history'><i class='bi bi-clock-history'></i></button>
                     </div>
                 </form>
                 ";
@@ -95,7 +95,22 @@ class RoleController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $validate = Validator::make($request->all(), [
+            "name" => "required",
+        ]);
+
+        if ($validate->fails()) {
+            return response()->json([
+                'errors' => $validate->errors(), 
+                'message' => 'Ada yang salah nih!!!'
+            ], 422);
+        }
+
+        $data = Role::create($validate->valid());
+
+        return response()->json([
+            'message' => "Role <b><i>$data->name</i></b> berhasil dirubah"
+        ], 201);
     }
 
     /**

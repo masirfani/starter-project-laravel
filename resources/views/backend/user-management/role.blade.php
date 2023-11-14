@@ -41,9 +41,9 @@
 <div class="row view-data">
     <div class="col-md-12">
         <div class="card">
-            <div class="card-body">
-                <div class="table-responsive">
-                    <table class="table datatable w-100">
+            <div class="card-body p-0">
+                <div class="table-responsive p-3">
+                    <table class="table table-hover table-sm datatable w-100">
                         <thead>
                             <tr>
                                 <th>No</th>
@@ -81,7 +81,7 @@
                     @csrf
                     <label>Nama Role</label>
                     <input type="text" name="name" class="form-control" placeholder="Masukkan nama role...">
-                    <button type="submit" class="btn btn-primary btn-sm mt-2"><i class="fa fa-paper-plane"></i> Tambah</button>
+                    <button type="submit" class="btn btn-warning btn-sm mt-2"><i class="fa fa-paper-plane"></i> Edit</button>
                 </form>
             </div>
         </div>
@@ -133,32 +133,22 @@
                     ajaxStop: function() { 
                         $(".loading").remove();
                         $(".view-"+view+" .card-body").show();
-                        // reload_table();
                     }    
                 });
+                $(".view-"+view).show(500);
+            }else{
+                $(".view-"+view).show(500);
             }
-            $(".view-"+view).show();
             if ($(".view-data").is(":hidden")) {
                 $(".btn-add").hide();
-                $(".btn-back").show();
+                $(".btn-back").show(500);
             }else{
-                $(".btn-add").show();
+                $(".btn-add").show(500);
                 $(".btn-back").hide();
             }
         }
-        $(".btn-add").click(function(){
-            show_view("form");
-        });
-        $(".btn-back").click(function(){
-            show_view("data");
-        });
 
-        $(".view-form form").submit(function(e){
-            e.preventDefault();
-            ajax_crud($(this));
-        })
-
-        function ajax_crud(form){
+        function ajax_crud(form, view){
             $(".error-message").remove();
             $.ajax({
                 url:  form.attr("action"),
@@ -172,6 +162,11 @@
                     $('#contentData').html(data);
                     show_msg(data, status);
                     reload_table();
+                    console.log("data");
+                    if (view != "delete") {
+                        show_view("data");
+                    }
+                    $(`.view-${view} form`)[0].reset();
                 },
                 error: function(data, status, xhr){
                     show_msg(data, status);
@@ -183,7 +178,8 @@
                             var pesan = `
                                 <p class="error-message text-danger mb-0">${errorMessages}</p>
                             `;
-                            $('.view-form [name="'+see+'"]').after(pesan); 
+                            $(`.view-${view} [name="${see}"]`).addClass("is-invalid"); 
+                            $(`.view-${view} [name="${see}"]`).after(pesan); 
                         });
                     }
                 }
@@ -212,11 +208,27 @@
         }
 
         function reload_table(){
-            $(".datatable").DataTable().ajax.reload();
+            $(".datatable").DataTable().ajax.reload(function(){
+                $(this).fadeIn('slow');
+            });
         }
 
-        $(window).on('resize', function() {
-            $('.datatable').columns.adjust();
+        $(".btn-add").click(function(){
+            show_view("form");
+        });
+
+        $(".btn-back").click(function(){
+            show_view("data");
+        });
+
+        $(".view-form form").submit(function(e){
+            e.preventDefault();
+            ajax_crud($(this), 'form');
+        });
+        
+        $(".view-edit form").submit(function(e){
+            e.preventDefault();
+            ajax_crud($(this), 'edit');
         });
 
         $('.datatable').DataTable({
@@ -258,20 +270,46 @@
                 cancelButtonText: "Tidak",
             }).then((result) => {
                 if (result.isConfirmed) {
-                    ajax_crud(form);
+                    ajax_crud(form, "delete");
+                }
+            });
+        });
+
+        $("body").on("click", ".btn-edit", function(){
+            show_view("edit");
+            let form = $(this).parents('form');
+            let url  = `${form.data("action")}/${form.data("id")}`;
+            $.ajax({
+                url:  url,
+                type: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+                },
+                dataType: 'json',
+                success: function(data, status, xhr) {
+
+                    Object.keys(data).forEach(function(key){
+                        $('.view-edit [name="'+key+'"]').val(data[key])
+                    });
+
+                    $(".view-edit form").attr("action", url);
+                },
+                error: function(data, status, xhr){
+                    show_msg(data, status);
                 }
             });
         });
 
         $("body").on("click", ".btn-detail", function(){
             show_view("detail");
+            let form = $(this).parents('form');
+            let url  = `${form.data("action")}/${form.data("id")}`;
             $.ajax({
-                url:  'role/'+$(this).data("id"),
+                url: url,
                 type: 'GET',
                 headers: {
                     'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
                 },
-                complete: function() { console.log("end"); },
                 dataType: 'json',
                 success: function(data, status, xhr) {
                     Object.keys(data).forEach(function(key){
@@ -284,5 +322,8 @@
             });
         });
 
+        $(window).on('resize', function() {
+            $('.datatable').columns.adjust();
+        });
     </script>
 @endpush

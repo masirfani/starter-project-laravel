@@ -179,9 +179,9 @@
                     </div>
                 </nav>
             </header>
-            <div id="main-content">
+            <div id="main-content" class="pt-0">
                 <div class="page-heading">
-                    <div class="page-title">
+                    <div class="page-title px-2">
                         <div class="row">
                             <div class="col-12 col-md-12 d-flex justify-content-between">
                                 <div>
@@ -205,6 +205,8 @@
     </div>
 
     <script src="{{ asset('template-backend/assets/extensions/jquery/jquery.min.js') }}"></script>
+    {{-- <script src="{{ asset('template-backend/assets/extensions/jquery/jquery.easing.min.js') }}"></script> --}}
+    <script src="{{ asset('template-backend/assets/extensions/jquery/jquery.ui.min.js') }}"></script>
     <script src="{{ asset('template-backend/assets/static/js/components/dark.js') }}"></script>
     <script src="{{ asset('template-backend/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
     <script src="{{ asset('template-backend/assets/compiled/js/app.js') }}"></script>

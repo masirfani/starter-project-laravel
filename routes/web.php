@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Back\AuthController;
 use App\Http\Controllers\Back\DashboardController;
+use App\Http\Controllers\back\PermissionController;
 use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\Route;
 
@@ -51,3 +52,4 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 
 // role management
 Route::resource('/role', RoleController::class);
+Route::resource('/permission', PermissionController::class);

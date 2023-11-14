@@ -1,7 +1,7 @@
 @extends('templates.backend.main-sidebar-navbar')
 
-@section('title', 'Role')
-@section('heading', 'Role Management')
+@section('title', 'Permission')
+@section('heading', 'Permission Management')
 @section('heading-right')
     <button class="btn btn-success btn-sm btn-add"><i class="fa fa-plus"></i></button>
     <button class="btn btn-dark btn-sm btn-back"><i class="fa fa-angle-left"></i></button>
@@ -30,7 +30,6 @@
         .view-detail{
             display: none;
         }
-
         .view-edit{
             display: none;
         }
@@ -69,8 +68,8 @@
             <div class="card-body">
                 <form action="{{ route("$route.store") }}" method="POST">
                     @csrf
-                    <label>Nama Role</label>
-                    <input type="text" name="name" class="form-control" placeholder="Masukkan nama role...">
+                    <label>Nama Permission</label>
+                    <input type="text" name="name" class="form-control" placeholder="Masukkan nama permission...">
                     <button type="submit" class="btn btn-primary btn-sm mt-2"><i class="fa fa-paper-plane"></i> Tambah</button>
                 </form>
             </div>
@@ -83,8 +82,8 @@
             <div class="card-body">
                 <form action="" method="PUT">
                     @csrf
-                    <label>Nama Role</label>
-                    <input type="text" name="name" class="form-control" placeholder="Masukkan nama role...">
+                    <label>Nama Permission</label>
+                    <input type="text" name="name" class="form-control" placeholder="Masukkan nama permission...">
                     <button type="submit" class="btn btn-warning btn-sm mt-2"><i class="fa fa-paper-plane"></i> Edit</button>
                 </form>
             </div>

@@ -78,6 +78,9 @@
                                 <li class="submenu-item  ">
                                     <a href="{{ route('role.index') }}" class="submenu-link">Role</a>
                                 </li>
+                                <li class="submenu-item  ">
+                                    <a href="{{ route('permission.index') }}" class="submenu-link">Permission</a>
+                                </li>
                             </ul>
                         </li>
                     </ul>

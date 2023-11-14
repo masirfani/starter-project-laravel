@@ -10,8 +10,18 @@
 @push('style')
     <style>
         .datatable tr th:last-child,th:first-child{
-            width: 1%;
-            white-space: nowrap;
+            width: 1%!important;
+            white-space: nowrap!important;
+        }
+
+        div.dataTables_wrapper div.dataTables_paginate ul.pagination {
+            justify-content: end!important;
+        }
+        div.dataTables_wrapper div.dataTables_length, div.dataTables_wrapper div.dataTables_info, div.dataTables_wrapper div.dataTables_paginate{
+            text-align: start!important;
+        }
+        div.dataTables_wrapper div.dataTables_filter{
+            text-align: end!important;
         }
 
         .view-form{
@@ -32,17 +42,19 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-                <table class="table datatable">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Nama</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table datatable w-100">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Nama</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -52,6 +64,20 @@
         <div class="card">
             <div class="card-body">
                 <form action="{{ route('role.store') }}" method="POST">
+                    @csrf
+                    <label>Nama Role</label>
+                    <input type="text" name="name" class="form-control" placeholder="Masukkan nama role...">
+                    <button type="submit" class="btn btn-primary btn-sm mt-2"><i class="fa fa-paper-plane"></i> Tambah</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row view-edit">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <form action="" method="PUT">
                     @csrf
                     <label>Nama Role</label>
                     <input type="text" name="name" class="form-control" placeholder="Masukkan nama role...">
@@ -90,6 +116,27 @@
         function show_view(view) {
             $(".view-data").hide();
             $("[class*=view-]").hide();
+            if(view != "data"){
+                $(document).on({
+                    ajaxStart: function() { 
+                        $(".view-"+view+" .card-body").hide();
+                        $(".view-"+view+" .card").append(`
+                            <div class="card-body loading">
+                                <div class="d-flex justify-content-center">
+                                    <div class="spinner-border" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                    },
+                    ajaxStop: function() { 
+                        $(".loading").remove();
+                        $(".view-"+view+" .card-body").show();
+                        // reload_table();
+                    }    
+                });
+            }
             $(".view-"+view).show();
             if ($(".view-data").is(":hidden")) {
                 $(".btn-add").hide();
@@ -168,13 +215,17 @@
             $(".datatable").DataTable().ajax.reload();
         }
 
+        $(window).on('resize', function() {
+            $('.datatable').columns.adjust();
+        });
+
         $('.datatable').DataTable({
             pagingType: 'simple',
             responsive: true,
             dom:
                 "<'row'<'col-3'l><'col-9'f>>" +
                 "<'row dt-row'<'col-sm-12'tr>>" +
-                "<'row'<'col-4'i><'col-8'p>>",
+                "<'row'<'col-4'i><'col-8 justify-content-end'p>>",
             "language": {
                 "info": "Page _PAGE_ of _PAGES_",
                 "lengthMenu": "_MENU_ ",
@@ -206,7 +257,9 @@
                 confirmButtonText: "Iya",
                 cancelButtonText: "Tidak",
             }).then((result) => {
-                ajax_crud(form);
+                if (result.isConfirmed) {
+                    ajax_crud(form);
+                }
             });
         });
 
@@ -218,6 +271,7 @@
                 headers: {
                     'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
                 },
+                complete: function() { console.log("end"); },
                 dataType: 'json',
                 success: function(data, status, xhr) {
                     Object.keys(data).forEach(function(key){
@@ -229,5 +283,6 @@
                 }
             });
         });
+
     </script>
 @endpush

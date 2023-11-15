@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="{{ asset('template-backend/assets') }}/compiled/css/table-datatable-jquery.css">
     <link rel="stylesheet" href="{{ asset('template-backend/assets/extensions/@fortawesome/fontawesome-free/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('template-backend/assets/compiled/css/style.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     @stack('style')
 </head>
@@ -218,6 +219,10 @@
     <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
     <script src="{{ asset('template-backend/assets') }}/static/js/pages/datatables.js"></script>
     @stack('script')
+    @isset($config_table)
+        <script>var columnConfigs = {!! $config_table !!};</script>
+        <script src="{{ asset('template-backend/assets/compiled/js/script.js') }}"></script>
+    @endisset
     @if (session()->has('alert'))
         <script>
             const Toast = Swal.mixin({
@@ -238,9 +243,6 @@
             });
         </script>
     @endif
-
-
-
 </body>
 
 </html>

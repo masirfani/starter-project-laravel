@@ -23,7 +23,7 @@ class RoleController extends Controller
             ->addIndexColumn()
             ->addColumn('action', function($see){
                 $data = "
-                <form action='". route('role.destroy', $see->id) ."' method='DELETE' data-action='role' data-id='$see->id'>
+                <form action='". route('role.destroy', $see->id) ."' method='DELETE' data-id='$see->id'>
                     <div class='d-flex gap-1'>
                         <button type='button' class='btn btn-info btn-sm btn-detail'><i class='bi bi-info'></i></button>
                         <button type='button' class='btn btn-warning btn-sm btn-edit'><i class='bi bi-pencil'></i></button>
@@ -38,9 +38,9 @@ class RoleController extends Controller
         }
 
         $config_table = [
-            ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'searchable' => false],
-            ['data' => 'name', 'name' => 'name'],
-            ['data' => 'action', 'name' => 'action', 'orderable' => false, 'searchable' => false],
+            ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title'=>'No', 'searchable' => false],
+            ['data' => 'name',        'name' => 'name', 'title'=>'Nama'],
+            ['data' => 'action',      'name' => 'action', 'title'=>'Aksi', 'orderable' => false, 'searchable' => false],
         ];
 
         return view('backend.user-management.role',[

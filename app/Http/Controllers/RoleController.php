@@ -38,9 +38,9 @@ class RoleController extends Controller
         }
 
         $config_table = [
-            ['data' => 'DT_RowIndex', 'name' => 'DT_RowIndex', 'title'=>'No', 'searchable' => false],
-            ['data' => 'name',        'name' => 'name', 'title'=>'Nama'],
-            ['data' => 'action',      'name' => 'action', 'title'=>'Aksi', 'orderable' => false, 'searchable' => false],
+            ['title'=>'No',   'data' => 'DT_RowIndex', 'name' => 'number', 'searchable' => false],
+            ['title'=>'Nama', 'data' => 'name',        'name' => 'name'],
+            ['title'=>'Aksi', 'data' => 'action',      'name' => 'action', 'orderable' => false, 'searchable' => false],
         ];
 
         return view('backend.user-management.role',[
@@ -116,7 +116,8 @@ class RoleController extends Controller
             ], 422);
         }
 
-        $data = Role::create($validate->valid());
+        $data = Role::find($id);
+        $data->update($validate->valid());
 
         return response()->json([
             'message' => "Role <b><i>$data->name</i></b> berhasil dirubah"
@@ -128,11 +129,23 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
-        $data = Role::find($id);
-        $data->destroy($id);
+        $id = explode(",", $id);
+        if (count($id) > 1) {
+            $data  = Role::whereIn('id',$id);
+            $count = $data->pluck('name')->count();
+            $text  = $data->pluck('name')->implode(', ');
+            $data->delete();
 
-        return response()->json([
-            'message' => "Role <b><i>$data->name</i></b> berhasil dihapus"
-        ], 200);
+            return response()->json([
+                'message' => "<b>$count</b> Role berhasil dihapus<p><b>$text</b></p>"
+            ], 200);
+        }else{
+            $data = Role::find($id[0]);
+            $data->destroy($id);
+    
+            return response()->json([
+                'message' => "Role <b><i>$data->name</i></b> berhasil dihapus"
+            ], 200);
+        }
     }
 }

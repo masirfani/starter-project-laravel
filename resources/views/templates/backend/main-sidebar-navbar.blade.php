@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="{{ asset('template-backend/assets/compiled/css/iconly.css') }}">
     <link rel="stylesheet" href="{{ asset('template-backend/assets/extensions/sweetalert2/sweetalert2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/css/buttons.bootstrap5.min.css">
     <link rel="stylesheet" href="{{ asset('template-backend/assets') }}/compiled/css/table-datatable-jquery.css">
     <link rel="stylesheet" href="{{ asset('template-backend/assets/extensions/@fortawesome/fontawesome-free/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template-backend/assets/compiled/css/style.css') }}">
@@ -217,6 +218,13 @@
     <script src="{{ asset('template-backend/assets/extensions/sweetalert2/sweetalert2.min.js') }}"></script>
     <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+    <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/dataTables.buttons.min.js"></script>
+    <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/buttons.bootstrap5.min.js"></script>
+    {{-- <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/buttons.colVis.min.js"></script> --}}
+    <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/buttons.print.min.js"></script>
+    <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/buttons.html5.min.js"></script>
+    <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/jszip.min.js"></script>
+    <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/pdfmake.min.js"></script>
     <script src="{{ asset('template-backend/assets') }}/static/js/pages/datatables.js"></script>
     @stack('script')
     @isset($config_table)

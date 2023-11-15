@@ -3,8 +3,11 @@
 @section('title', 'Role')
 @section('heading', 'Role Management')
 @section('heading-right')
-    <button class="btn btn-success btn-sm btn-add"><i class="fa fa-plus"></i></button>
-    <button class="btn btn-dark btn-sm btn-back"><i class="fa fa-angle-left"></i></button>
+    <form action="{{ route("$route.destroy", '') }}" method="DELETE">
+        <button type="button" class="btn btn-danger btn-sm btn-delete-all"><i class="fa fa-trash"></i></button>
+        <button type="button" class="btn btn-success btn-sm btn-add"><i class="fa fa-plus"></i></button>
+        <button type="button" class="btn btn-dark btn-sm btn-back"><i class="fa fa-angle-left"></i></button>
+    </form>
 @endsection
 
 @section('content')

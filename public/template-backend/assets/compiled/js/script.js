@@ -1,12 +1,11 @@
 let selectedId = [];
-let form       = $(".btn-delete-all").parents("form");
 
 // READ DATA
 let datatable = $('.datatable').DataTable({
     pagingType: 'simple',
     responsive: true,
     dom:
-    "<'row'<'col-6'lB><'col-6'f>>" +
+    "<'row g-0'<'col-12 col-md-6 d-flex gap-1'lB><'col-12 col-md-6'f>>" +
     "<'row dt-row'<'col-sm-12'tr>>" +
     "<'row'<'col-4'i><'col-8'p>>",
     "language": {
@@ -25,30 +24,31 @@ let datatable = $('.datatable').DataTable({
     buttons: [
         {
             extend: 'copy',
-            text: '<i class="fa fa-copy"></i> Copy',
+            text: '<i class="fa fa-copy"></i> <small>Copy</small>',
             titleAttr: 'Copy',
-            className: 'btn btn-secondary btn-sm',
+            className: 'btn btn-secondary btn-sm ',
         },
         {
             extend: 'excel',
-            text: '<i class="fa fa-file-excel"></i> Excel',
+            text: '<i class="fa fa-file-excel"></i> <small>Excel</small>',
             titleAttr: 'Export to Excel',
-            className: 'btn btn-success btn-sm',
+            className: 'btn btn-success btn-sm ',
         },
         {
             extend: 'pdf',
-            text: '<i class="fa fa-file-pdf"></i> PDF',
+            text: '<i class="fa fa-file-pdf"></i> <small>PDF</small>',
             titleAttr: 'Export to PDF',
-            className: 'btn btn-danger btn-sm',
+            className: 'btn btn-danger btn-sm ',
         }
     ]
 });
 
-let getAttr = form.attr("action");
-form.submit(function(e){
+let getAttr = $(".btn-delete-all").parents("form").attr("action");
+$(".btn-delete-all").parents("form").submit(function(e){
     e.preventDefault();
     ajaxCrud($(this), 'delete');
 });
+
 $("body table.datatable").on("click", "tr td:not(:last-child)",function(){
     var rowData = datatable.row($(this).closest('tr')).data();
     var clickedId = rowData ? rowData['id'] : null;
@@ -66,25 +66,23 @@ $("body table.datatable").on("click", "tr td:not(:last-child)",function(){
             $(this).closest('tr').removeClass('selected');
         }
         
-        form.attr("action", `${getAttr}/${selectedId.join(',')}`);
+        $(".btn-delete-all").parents("form").attr("action", `${getAttr}/${selectedId.join(',')}`);
     }
 });
 
-function reload_table(){
+function reloadTable(){
     $(".datatable").DataTable().ajax.reload(function(){
         $(this).fadeIn('slow');
         selectedId = [];
     });
 }
 
-// BUTTON BACK
-$(".btn-back").click(function(){
-    showView("data");
-});
-
-// BUTTON ADD
+// BUTTON MOVE
 $(".btn-add").click(function(){
     showView("form");
+});
+$(".btn-back").click(function(){
+    showView("data");
 });
 
 // SUBMIT FORM / CREATE DATA
@@ -204,7 +202,7 @@ function ajaxCrud(form, view){
         success: function(data, status, xhr) {
             $('#contentData').html(data);
             showMsg(data, status);
-            reload_table();
+            reloadTable();
             if (view != "delete") {
                 showView("data");
             }
@@ -233,6 +231,7 @@ showView("data");
 function showView(view) {
     $(".view-data").hide();
     $("[class*=view-]").hide();
+    $(".loading").remove();
     if(view != "data"){
         $(document).on({
             ajaxStart: function() { 
@@ -250,19 +249,25 @@ function showView(view) {
             ajaxStop: function() { 
                 $(".loading").remove();
                 $(".view-"+view+" .card-body").show();
+
+                $(":focus").removeAttr("autofocus");
+                $(".view-"+view+" form input:visible:not(:hidden):first").focus();
             }    
         });
         $(".view-"+view).show(500);
-    }else{
-        $(".view-"+view).show(500);
-    }
-    if ($(".view-data").is(":hidden")) {
-        $(".btn-add").hide();
+        
         $(".btn-back").show(500);
+        $(".btn-add").hide();
+        $(".btn-delete-all").hide();
     }else{
         $(".btn-add").show(500);
+        $(".btn-delete-all").show(500);
         $(".btn-back").hide();
+        $(".view-"+view).show(500);
+        $(".view-"+view+" .card-body").show(500);
     }
+    $(":focus").removeAttr("autofocus");
+    $(".view-"+view+" form input:visible:not(:hidden):first").focus();
 }
 
 function showMsg(response, type) {
@@ -273,6 +278,7 @@ function showMsg(response, type) {
         showConfirmButton: false,
         timer: 3000,
         timerProgressBar: true,
+        padding:10,
         didOpen: (toast) => {
             toast.addEventListener('mouseenter', Swal.stopTimer)
             toast.addEventListener('mouseleave', Swal.resumeTimer)

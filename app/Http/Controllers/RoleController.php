@@ -38,7 +38,7 @@ class RoleController extends Controller
         }
 
         $config_table = [
-            ['title'=>'No',   'data' => 'DT_RowIndex', 'name' => 'number', 'searchable' => false],
+            ['title'=>'No',   'data' => 'DT_RowIndex', 'name' => 'number', 'searchable' => false, 'className' => 'text-center'],
             ['title'=>'Nama', 'data' => 'name',        'name' => 'name'],
             ['title'=>'Aksi', 'data' => 'action',      'name' => 'action', 'orderable' => false, 'searchable' => false],
         ];

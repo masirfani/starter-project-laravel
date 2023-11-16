@@ -13,9 +13,16 @@
 @section('content')
 <span class="route">{{ $route }}</span>
 {{-- DATA --}}
-<div class="row view-data">
+<div class="row g-0 view-data">
     <div class="col-md-12">
         <div class="card">
+            <div class="card-body loading">
+                <div class="d-flex justify-content-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
             <div class="card-body p-0">
                 <div class="table-responsive p-3">
                     <table class="table table-hover table-sm datatable w-100"></table>
@@ -26,7 +33,7 @@
 </div>
 
 {{-- FORM VIEW --}}
-<div class="row view-form">
+<div class="row g-0 view-form">
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
@@ -42,7 +49,7 @@
 </div>
 
 {{-- FORM EDIT --}}
-<div class="row view-edit">
+<div class="row g-0 view-edit">
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
@@ -58,7 +65,7 @@
 </div>
 
 {{-- DETAIL --}}
-<div class="row view-detail">
+<div class="row g-0 view-detail">
     <div class="col-md-12">
         <div class="card">
             <div class="card-body set-detail">

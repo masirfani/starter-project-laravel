@@ -86,10 +86,18 @@ class RoleController extends Controller
      */
     public function show(string $id)
     {
-        $data = Role::find($id);
-        $data->created_on = $data->created_at->diffForHumans();
-        $data->updated_on = $data->updated_at->diffForHumans();
-        return response()->json($data, 200);
+        $id = explode(",", $id);
+        if (count($id) > 1) {
+            $data = Role::whereIn('id', $id)->get();
+            $data->created_on = $data->created_at->diffForHumans();
+            $data->updated_on = $data->updated_at->diffForHumans();
+            return response()->json($data, 200);
+        }else{
+            $data = Role::find($id);
+            $data->created_on = $data->created_at->diffForHumans();
+            $data->updated_on = $data->updated_at->diffForHumans();
+            return response()->json($data, 200);
+        }
     }
 
     /**

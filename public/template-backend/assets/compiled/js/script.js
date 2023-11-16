@@ -43,8 +43,8 @@ let datatable = $('.datatable').DataTable({
     ]
 });
 
-let getAttr = $(".btn-delete-all").parents("form").attr("action");
-$(".btn-delete-all").parents("form").submit(function(e){
+let getAttr = $(".btn-delete-selected").parents("form").attr("action");
+$(".btn-delete-selected").parents("form").submit(function(e){
     e.preventDefault();
     ajaxCrud($(this), 'delete');
 });
@@ -65,8 +65,11 @@ $("body table.datatable").on("click", "tr td:not(:last-child)",function(){
             selectedId.splice(index, 1);
             $(this).closest('tr').removeClass('selected');
         }
+
+        let dataId = selectedId.join(',');
         
-        $(".btn-delete-all").parents("form").attr("action", `${getAttr}/${selectedId.join(',')}`);
+        $(".selected-id").html(dataId);
+        $(".btn-delete-selected").parents("form").attr("action", `${getAttr}/${dataId}`);
     }
 });
 
@@ -143,7 +146,7 @@ $("body").on("click", ".btn-delete", function(){
 });
 
 // DELETE SELECTED
-$("body").on("click", ".btn-delete-all", function(){
+$("body").on("click", ".btn-delete-selected", function(){
     if(selectedId.length == 0){
         showMsg('Pilih data dari table dulu!!!', 'info')
     }else{
@@ -187,6 +190,32 @@ $("body").on("click", ".btn-detail", function(){
             showMsg(data, status);
         }
     });
+});
+$("body").on("click", ".btn-detail-selected", function(){
+    if(selectedId.length == 0){
+        showMsg('Pilih data dari table dulu!!!', 'info')
+    }else{
+        showView("detail");
+        let form = $(this).parents('form');
+        form.attr("action", "")
+        let url  = `${$(".route").html()}/${$(".selected-id").html()}`;
+        $.ajax({
+            url: url,
+            type: 'GET',
+            headers: {
+                'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+            },
+            dataType: 'json',
+            success: function(data, status, xhr) {
+                Object.keys(data).forEach(function(key){
+                    $(".detail-"+key).html(data[key]);
+                });
+            },
+            error: function(data, status, xhr){
+                showMsg(data, status);
+            }
+        });
+    }
 });
 
 function ajaxCrud(form, view){
@@ -258,10 +287,11 @@ function showView(view) {
         
         $(".btn-back").show(500);
         $(".btn-add").hide();
-        $(".btn-delete-all").hide();
+        $(".btn-delete-selected").hide();
     }else{
         $(".btn-add").show(500);
-        $(".btn-delete-all").show(500);
+        $(".btn-delete-selected").show(500);
+        $(".btn-detail-selected").show(500);
         $(".btn-back").hide();
         $(".view-"+view).show(500);
         $(".view-"+view+" .card-body").show(500);

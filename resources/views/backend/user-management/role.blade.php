@@ -4,7 +4,8 @@
 @section('heading', 'Role Management')
 @section('heading-right')
     <form action="{{ route("$route.destroy", '') }}" method="DELETE">
-        <button type="button" class="btn btn-danger btn-sm btn-delete-all"><i class="fa fa-trash"></i></button>
+        <button type="button" class="btn btn-info btn-sm btn-detail-selected"><i class="fa fa-info"></i></button>
+        <button type="button" class="btn btn-danger btn-sm btn-delete-selected"><i class="fa fa-trash"></i></button>
         <button type="button" class="btn btn-success btn-sm btn-add"><i class="fa fa-plus"></i></button>
         <button type="button" class="btn btn-dark btn-sm btn-back"><i class="fa fa-angle-left"></i></button>
     </form>
@@ -12,6 +13,7 @@
 
 @section('content')
 <span class="route">{{ $route }}</span>
+<span class="selected-id"></span>
 {{-- DATA --}}
 <div class="row g-0 view-data">
     <div class="col-md-12">
@@ -67,7 +69,7 @@
 {{-- DETAIL --}}
 <div class="row g-0 view-detail">
     <div class="col-md-12">
-        <div class="card">
+        <div class="card mb-2 card-detail">
             <div class="card-body set-detail">
                 <div class="row">
                     <div class="col-6">
@@ -76,10 +78,10 @@
                     </div>
                     <div class="w-100"><hr></div>
                     <div class="col-6"> 
-                        <p><small><b>Dibuat :</b> <span class="detail-created_on"></span></small></p>     
+                        <p><small><b>Created :</b> <span class="detail-created_on"></span></small></p>     
                     </div>
                     <div class="col-6">
-                        <p><small><b>Terakhir di edit :</b> <span class="detail-updated_on"></span></small></p>     
+                        <p><small><b>Edited :</b> <span class="detail-updated_on"></span></small></p>     
                     </div>
                 </div>
             </div>

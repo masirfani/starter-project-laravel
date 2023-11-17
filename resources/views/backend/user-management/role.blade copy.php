@@ -3,10 +3,9 @@
 @section('title', 'Role')
 @section('heading', 'Role Management')
 @section('heading-right')
-    <form action="{{ route("$route.destroy", '') }}" method="DELETE" class="btn-heading">
-        <button type="button" class="btn btn-info btn-sm btn-detail"><i class="bi bi-info"></i></button>
-        <button type="button" class="btn btn-warning btn-sm btn-edit"><i class="bi bi-pencil"></i></button>
-        <button type="button" class="btn btn-danger btn-sm btn-delete"><i class="fa fa-trash"></i></button>
+    <form action="{{ route("$route.destroy", '') }}" method="DELETE">
+        <button type="button" class="btn btn-info btn-sm btn-detail-selected"><i class="fa fa-info"></i></button>
+        <button type="button" class="btn btn-danger btn-sm btn-delete-selected"><i class="fa fa-trash"></i></button>
         <button type="button" class="btn btn-success btn-sm btn-add"><i class="fa fa-plus"></i></button>
         <button type="button" class="btn btn-dark btn-sm btn-back"><i class="fa fa-angle-left"></i></button>
     </form>
@@ -69,9 +68,9 @@
 
 {{-- DETAIL --}}
 <div class="row g-0 view-detail">
-    <div class="col-md-12 card-detail">
-        <div class="card mb-2">
-            <div class="card-body">
+    <div class="col-md-12">
+        <div class="card mb-2 card-detail">
+            <div class="card-body set-detail">
                 <div class="row">
                     <div class="col-6">
                         <b>Nama</b> 

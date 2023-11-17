@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\DataTables;
 
+
 class RoleController extends Controller
 {
     /**
@@ -18,29 +19,14 @@ class RoleController extends Controller
     {
         // get data table ajax
         if ($request->ajax()) {
-            $data = Role::latest()->get();
-            return DataTables::of($data)
+            return DataTables::of(Role::query()->orderBy('created_at', 'desc'))
             ->addIndexColumn()
-            ->addColumn('action', function($see){
-                $data = "
-                <form action='". route('role.destroy', $see->id) ."' method='DELETE' data-id='$see->id'>
-                    <div class='d-flex gap-1'>
-                        <button type='button' class='btn btn-info btn-sm btn-detail'><i class='bi bi-info'></i></button>
-                        <button type='button' class='btn btn-warning btn-sm btn-edit'><i class='bi bi-pencil'></i></button>
-                        <button type='button' class='btn btn-danger btn-sm btn-delete'><i class='bi bi-trash'></i></button>
-                    </div>
-                </form>
-                ";
-                return $data;
-            })
-            ->rawColumns(['action'])
-            ->make(true);
+            ->toJson();
         }
 
         $config_table = [
-            ['title'=>'No',   'data' => 'DT_RowIndex', 'name' => 'number', 'searchable' => false, 'className' => 'text-center'],
+            ['title'=>'No',   'data' => 'DT_RowIndex', 'name' => 'id', 'searchable' => false, 'className' => 'dt-no text-center'],
             ['title'=>'Nama', 'data' => 'name',        'name' => 'name'],
-            ['title'=>'Aksi', 'data' => 'action',      'name' => 'action', 'orderable' => false, 'searchable' => false],
         ];
 
         return view('backend.user-management.role',[
@@ -87,17 +73,16 @@ class RoleController extends Controller
     public function show(string $id)
     {
         $id = explode(",", $id);
-        if (count($id) > 1) {
-            $data = Role::whereIn('id', $id)->get();
-            $data->created_on = $data->created_at->diffForHumans();
-            $data->updated_on = $data->updated_at->diffForHumans();
-            return response()->json($data, 200);
-        }else{
-            $data = Role::find($id);
-            $data->created_on = $data->created_at->diffForHumans();
-            $data->updated_on = $data->updated_at->diffForHumans();
-            return response()->json($data, 200);
-        }
+
+        $data = Role::whereIn('id', $id)->get();
+        
+        $data = $data->map(function($see){
+            $see->created_on = $see->created_at->diffForHumans();
+            $see->updated_on = $see->updated_at->diffForHumans();
+            return $see;
+        });
+        
+        return response()->json($data, 200);
     }
 
     /**

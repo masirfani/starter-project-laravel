@@ -1,4 +1,5 @@
 let selectedId = [];
+let getAttr = $(".btn-delete").parents("form").attr("action");
 
 // READ DATA
 let datatable = $('.datatable').DataTable({
@@ -7,13 +8,15 @@ let datatable = $('.datatable').DataTable({
     dom:
     "<'row g-0'<'col-12 col-md-6 d-flex gap-1'lB><'col-12 col-md-6'f>>" +
     "<'row dt-row'<'col-sm-12'tr>>" +
-    "<'row'<'col-4'i><'col-8'p>>",
+    "<'row'<'col-7'i><'col-5'p>>",
     "language": {
-        "info": "Page _PAGE_ of _PAGES_",
+        "info": "Page <b>_PAGE_</b> of <b>_PAGES_</b>",
+        "infoFiltered": "(<b>Total _MAX_</b>)",
         "lengthMenu": "_MENU_ ",
         "search": "",
         "searchPlaceholder": "Cari sesuatu..."
     },
+    lengthMenu: [10, 50, 100, 1000],
     processing: true,
     serverSide: true,
     ajax: {
@@ -43,13 +46,13 @@ let datatable = $('.datatable').DataTable({
     ]
 });
 
-let getAttr = $(".btn-delete-selected").parents("form").attr("action");
-$(".btn-delete-selected").parents("form").submit(function(e){
+
+$(".btn-delete").parents("form").submit(function(e){
     e.preventDefault();
     ajaxCrud($(this), 'delete');
 });
 
-$("body table.datatable").on("click", "tr td:not(:last-child)",function(){
+$("body table.datatable").on("click", "tr td:not(.dt-aksi)",function(){
     var rowData = datatable.row($(this).closest('tr')).data();
     var clickedId = rowData ? rowData['id'] : null;
     
@@ -69,7 +72,7 @@ $("body table.datatable").on("click", "tr td:not(:last-child)",function(){
         let dataId = selectedId.join(',');
         
         $(".selected-id").html(dataId);
-        $(".btn-delete-selected").parents("form").attr("action", `${getAttr}/${dataId}`);
+        $(".btn-delete").parents("form").attr("action", `${getAttr}/${dataId}`);
     }
 });
 
@@ -96,29 +99,39 @@ $(".view-form form").submit(function(e){
 
 // EDIT MOMENT
 $("body").on("click", ".btn-edit", function(){
-    showView("edit");
-    let form = $(this).parents('form');
-    let url  = `${$(".route").html()}/${form.data("id")}`;
-    $.ajax({
-        url:  url,
-        type: 'GET',
-        headers: {
-            'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
-        },
-        dataType: 'json',
-        success: function(data, status, xhr) {
-
-            Object.keys(data).forEach(function(key){
-                $('.view-edit [name="'+key+'"]').val(data[key])
-            });
-
-            $(".view-edit form").attr("action", url);
-        },
-        error: function(data, status, xhr){
-            showMsg(data, status);
-        }
-    });
+    if(selectedId.length == 0){
+        showMsg('Pilih data dari table dulu!!!', 'info')
+    }else if(selectedId.length > 1){
+        showMsg('Hanya bisa 1 data yang di edit', 'info')
+    }else{
+        showView("edit");
+        let form = $(this).parents('form');
+        let url  = `${$(".route").html()}/${$(".selected-id").html()}`;
+        $.ajax({
+            url:  url,
+            type: 'GET',
+            headers: {
+                'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
+            },
+            dataType: 'json',
+            success: function(data, status, xhr) {
+    
+                data.forEach(function(see, number){
+                    Object.keys(see).forEach(function(key){
+                        $('.view-edit [name="'+key+'"]').val(see[key])
+                    });
+                });
+    
+                $(".view-edit form").attr("action", url);
+            },
+            error: function(data, status, xhr){
+                showMsg(data, status);
+            }
+        });
+    }
+    
 });
+
 
 // SUBMIT EDIT / UPDATE DATA
 $(".view-edit form").submit(function(e){
@@ -128,25 +141,6 @@ $(".view-edit form").submit(function(e){
 
 // DELETE MOMENT
 $("body").on("click", ".btn-delete", function(){
-    let form = $(this).parents("form");
-    Swal.fire({
-        title: "Apakah anda yakin",
-        text: "Ingin menghapus data ini???",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#e74c3c",
-        cancelButtonColor: "#34495e",
-        confirmButtonText: "Iya",
-        cancelButtonText: "Tidak",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            ajaxCrud(form, "delete");
-        }
-    });
-});
-
-// DELETE SELECTED
-$("body").on("click", ".btn-delete-selected", function(){
     if(selectedId.length == 0){
         showMsg('Pilih data dari table dulu!!!', 'info')
     }else{
@@ -170,32 +164,13 @@ $("body").on("click", ".btn-delete-selected", function(){
 
 
 // BUTTON DETAIL
+let dataDetail = $(".card-detail").html();
 $("body").on("click", ".btn-detail", function(){
-    showView("detail");
-    let form = $(this).parents('form');
-    let url  = `${$(".route").html()}/${form.data("id")}`;
-    $.ajax({
-        url: url,
-        type: 'GET',
-        headers: {
-            'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
-        },
-        dataType: 'json',
-        success: function(data, status, xhr) {
-            Object.keys(data).forEach(function(key){
-                $(".detail-"+key).html(data[key]);
-            });
-        },
-        error: function(data, status, xhr){
-            showMsg(data, status);
-        }
-    });
-});
-$("body").on("click", ".btn-detail-selected", function(){
     if(selectedId.length == 0){
         showMsg('Pilih data dari table dulu!!!', 'info')
     }else{
         showView("detail");
+        $(".card-detail").html(dataDetail);
         let form = $(this).parents('form');
         form.attr("action", "")
         let url  = `${$(".route").html()}/${$(".selected-id").html()}`;
@@ -207,8 +182,16 @@ $("body").on("click", ".btn-detail-selected", function(){
             },
             dataType: 'json',
             success: function(data, status, xhr) {
-                Object.keys(data).forEach(function(key){
-                    $(".detail-"+key).html(data[key]);
+                $(".card-detail").html("");
+                let newDataDetail = "";
+                data.forEach(function(see, number){
+                    newDataDetail += dataDetail;
+                    $(".card-detail").html(newDataDetail);
+                });
+                data.forEach(function(see, number){
+                    Object.keys(see).forEach(function(key){
+                        $(".detail-"+key).eq(number).html(see[key]);
+                    });
                 });
             },
             error: function(data, status, xhr){
@@ -285,14 +268,12 @@ function showView(view) {
         });
         $(".view-"+view).show(500);
         
-        $(".btn-back").show(500);
-        $(".btn-add").hide();
-        $(".btn-delete-selected").hide();
+        $(".btn-heading .btn-back").show(500);
+        $(".btn-heading button:not(.btn-back)").hide();
     }else{
-        $(".btn-add").show(500);
-        $(".btn-delete-selected").show(500);
-        $(".btn-detail-selected").show(500);
-        $(".btn-back").hide();
+        $(".btn-heading .btn-back").hide();
+        $(".btn-heading button:not(.btn-back)").show(500);
+
         $(".view-"+view).show(500);
         $(".view-"+view+" .card-body").show(500);
     }

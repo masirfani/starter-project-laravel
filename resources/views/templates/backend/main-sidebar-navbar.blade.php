@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="{{ asset('template-backend/assets/extensions/sweetalert2/sweetalert2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css">
     <link rel="stylesheet" href="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/css/buttons.bootstrap5.min.css">
+    <link rel="stylesheet" href="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/css/select.dataTables.min.css">
     <link rel="stylesheet" href="{{ asset('template-backend/assets') }}/compiled/css/table-datatable-jquery.css">
     <link rel="stylesheet" href="{{ asset('template-backend/assets/extensions/@fortawesome/fontawesome-free/css/all.min.css') }}">
     <link rel="stylesheet" href="{{ asset('template-backend/assets/compiled/css/style.css') }}">
@@ -214,7 +215,7 @@
     <script src="{{ asset('template-backend/assets/extensions/jquery/jquery.ui.min.js') }}"></script>
     <script src="{{ asset('template-backend/assets/static/js/components/dark.js') }}"></script>
     <script src="{{ asset('template-backend/assets/extensions/perfect-scrollbar/perfect-scrollbar.min.js') }}"></script>
-    <script src="{{ asset('template-backend/assets/compiled/js/app.js') }}"></script>
+    {{-- <script src="{{ asset('template-backend/assets/compiled/js/app.js') }}"></script> --}}
     <script src="{{ asset('template-backend/assets/extensions/sweetalert2/sweetalert2.min.js') }}"></script>
     <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net/js/jquery.dataTables.min.js"></script>
     <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
@@ -224,6 +225,8 @@
     <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/buttons.print.min.js"></script>
     <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/buttons.html5.min.js"></script>
     <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/jszip.min.js"></script>
+    <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/pdfmake.min.js"></script>
+    <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/dataTables.select.min.js"></script>
     <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/pdfmake.min.js"></script>
     <script src="{{ asset('template-backend/assets') }}/static/js/pages/datatables.js"></script>
     @stack('script')

@@ -4,7 +4,6 @@ let getAttr = $(".btn-delete").parents("form").attr("action");
 // READ DATA
 let datatable = $('.datatable').DataTable({
     pagingType: 'simple',
-    responsive: true,
     dom:
     "<'row g-0'<'col-12 col-md-6 d-flex gap-1'lB><'col-12 col-md-6'f>>" +
     "<'row dt-row'<'col-sm-12'tr>>" +
@@ -19,6 +18,9 @@ let datatable = $('.datatable').DataTable({
     lengthMenu: [10, 50, 100, 1000],
     processing: true,
     serverSide: true,
+    responsive: true,
+    stateSave: true,
+    select:'multi',
     ajax: {
         url: $(".route").html(),
         type: 'GET'
@@ -43,37 +45,29 @@ let datatable = $('.datatable').DataTable({
             titleAttr: 'Export to PDF',
             className: 'btn btn-danger btn-sm ',
         }
-    ]
+    ],
+    initComplete: function () {
+        var api = this.api();
+        
+        api.on('select deselect', function (e, dt, type, indexes) {
+            if (type === 'row') {
+                var selectedRows = api.rows({ selected: true });
+                selectedId = selectedRows.data().pluck('id').toArray();
+
+                let dataId = selectedId.join(',');
+        
+                $(".selected-id").html(dataId);
+                $(".btn-delete").parents("form").attr("action", `${getAttr}/${dataId}`);
+            }
+        });
+        
+    }
 });
 
 
 $(".btn-delete").parents("form").submit(function(e){
     e.preventDefault();
     ajaxCrud($(this), 'delete');
-});
-
-$("body table.datatable").on("click", "tr td:not(.dt-aksi)",function(){
-    var rowData = datatable.row($(this).closest('tr')).data();
-    var clickedId = rowData ? rowData['id'] : null;
-    
-    if (clickedId !== null) {
-        var index = selectedId.indexOf(clickedId);
-    
-        if (index === -1) {
-            // Add the ID if it's not already in the array
-            selectedId.push(clickedId);
-            $(this).closest('tr').addClass('selected');
-        } else {
-            // Remove the ID if it's already in the array
-            selectedId.splice(index, 1);
-            $(this).closest('tr').removeClass('selected');
-        }
-
-        let dataId = selectedId.join(',');
-        
-        $(".selected-id").html(dataId);
-        $(".btn-delete").parents("form").attr("action", `${getAttr}/${dataId}`);
-    }
 });
 
 function reloadTable(){
@@ -99,6 +93,7 @@ $(".view-form form").submit(function(e){
 
 // EDIT MOMENT
 $("body").on("click", ".btn-edit", function(){
+    console.log(selectedId);
     if(selectedId.length == 0){
         showMsg('Pilih data dari table dulu!!!', 'info')
     }else if(selectedId.length > 1){
@@ -217,7 +212,9 @@ function ajaxCrud(form, view){
             if (view != "delete") {
                 showView("data");
             }
-            $(`.view-${view} form`)[0].reset();
+            if ($(`.view-${view} form`)[0]) {
+                $(`.view-${view} form`)[0].reset();
+            }
             $(`.view-${view} form .is-invalid`).removeClass("is-invalid");
         },
         error: function(data, status, xhr){

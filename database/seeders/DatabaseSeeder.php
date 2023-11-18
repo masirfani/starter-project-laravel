@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             'password' => password_hash("admin123", PASSWORD_BCRYPT),
         ]);
 
-        for ($i=0; $i < 100000; $i++) { 
+        for ($i=0; $i < 1000; $i++) { 
             Role::create([
                 "name" => fake()->name().rand(100,999)
             ]);

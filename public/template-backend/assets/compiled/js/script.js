@@ -132,7 +132,6 @@ $("body").on("click", ".btn-edit", function(){
     
 });
 
-
 // SUBMIT EDIT / UPDATE DATA
 $(".view-edit form").submit(function(e){
     e.preventDefault();

@@ -2,6 +2,7 @@ let selectedId = [];
 let getAttr = $(".btn-delete").parents("form").attr("action");
 
 // READ DATA
+var windowHeight = Number($(window).height()) - 270;
 $(document).ready(function(){
     let datatable = $('.datatable').DataTable({
         pagingType: 'simple',
@@ -24,7 +25,7 @@ $(document).ready(function(){
         scrollX: true,
         fixedHeader: true,
         scrollCollapse: true,
-        scrollY: '500px',
+        scrollY: windowHeight + "px",
         select:'multi',
         ajax: {
             url: $(".route").html(),

@@ -3,7 +3,9 @@
 use App\Http\Controllers\Back\AuthController;
 use App\Http\Controllers\Back\DashboardController;
 use App\Http\Controllers\back\PermissionController;
+use App\Http\Controllers\ExperinmentController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\StudentController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,7 +22,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-
 Route::get('/sidebar', function () {
     return view('templates.backend.main-sidebar');
 });
@@ -53,3 +54,4 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 // role management
 Route::resource('/role', RoleController::class);
 Route::resource('/permission', PermissionController::class);
+Route::resource('/experiment', ExperinmentController::class);

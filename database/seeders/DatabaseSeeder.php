@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Experiment;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
@@ -24,11 +25,14 @@ class DatabaseSeeder extends Seeder
             'password' => password_hash("admin123", PASSWORD_BCRYPT),
         ]);
 
-        for ($i=0; $i < 1000; $i++) { 
-            Role::create([
-                "name" => fake()->name().rand(100,999)
-            ]);
-        }
+        // for ($i=0; $i < 1000; $i++) { 
+        //     Role::create([
+        //         "name" => fake()->name().rand(100,999)
+        //     ]);
+        // }
+
+        Experiment::factory(1000)->create();
+
         // pembuatan role
         $role = Role::create(['name' => 'writer']);
         // pembuatan permision

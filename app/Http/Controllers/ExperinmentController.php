@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Models\Experiment;
 use Illuminate\Http\Request;
-use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 
 
-class RoleController extends Controller
+class ExperinmentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -18,18 +17,37 @@ class RoleController extends Controller
     {
         // get data table ajax
         if ($request->ajax()) {
-            return DataTables::of(Role::query()->orderBy('created_at', 'desc'))
+            return DataTables::of(Experiment::query()->orderBy('created_at', 'desc'))
             ->addIndexColumn()
+            ->editColumn('status', function($see){
+                return ($see->is_active) ? '<span class="badge text-bg-success">Active</span>' : '<span class="badge text-bg-danger">No</span>';
+            })
+            ->filter(function ($query) use ($request) {
+                if ($request->input('search')["value"]) {
+                    $data = "";
+                    if ($request->input('search')["value"] == "active") {
+                        $data = 1;
+                    }
+                    if ($request->input('search')["value"] == "no") {
+                        $data = 0;
+                    }
+                    $query->where('is_active', 'LIKE', '%' . $data . '%');
+                }
+            })
+            ->rawColumns(['status'])
             ->toJson();
         }
 
         $config_table = [
-            ['title'=>'No',   'data' => 'DT_RowIndex', 'name' => 'id', 'searchable' => false, 'className' => 'dt-no text-center'],
-            ['title'=>'Nama', 'data' => 'name',        'name' => 'name'],
+            ['title' => 'No',   'data'  => 'DT_RowIndex', 'name' => 'id', 'searchable' => false, 'className' => 'dt-no text-center'],
+            ['title' => 'Nama', 'data'  => 'name',        'name' => 'name'],
+            ['title' => 'Agama', 'data' => 'religion',    'name' => 'religion'],
+            ['title' => 'Nilai', 'data' => 'nilai',       'name' => 'nilai'],
+            ['title' => 'Status', 'data' => 'status',     'name' => 'status'],
         ];
 
-        return view('backend.user-management.role',[
-            "route" => "role",
+        return view('experiment.experiment',[
+            "route" => "experiment",
             "config_table" => json_encode($config_table)
         ]);
     }
@@ -59,10 +77,10 @@ class RoleController extends Controller
             ], 422);
         }
 
-        $data = Role::create($validate->valid());
+        $data = Experiment::create($validate->valid());
 
         return response()->json([
-            'message' => "Role <b><i>$data->name</i></b> berhasil ditambahkan"
+            'message' => "Experiment <b><i>$data->name</i></b> berhasil ditambahkan"
         ], 201);
     }
 
@@ -73,7 +91,7 @@ class RoleController extends Controller
     {
         $id = explode(",", $id);
 
-        $data = Role::whereIn('id', $id)->get();
+        $data = Experiment::whereIn('id', $id)->get();
         
         $data = $data->map(function($see){
             $see->created_on = $see->created_at->diffForHumans();
@@ -108,11 +126,11 @@ class RoleController extends Controller
             ], 422);
         }
 
-        $data = Role::find($id);
+        $data = Experiment::find($id);
         $data->update($validate->valid());
 
         return response()->json([
-            'message' => "Role <b><i>$data->name</i></b> berhasil dirubah"
+            'message' => "Experiment <b><i>$data->name</i></b> berhasil dirubah"
         ], 201);
     }
 
@@ -123,20 +141,20 @@ class RoleController extends Controller
     {
         $id = explode(",", $id);
         if (count($id) > 1) {
-            $data  = Role::whereIn('id',$id);
+            $data  = Experiment::whereIn('id',$id);
             $count = $data->pluck('name')->count();
             $text  = $data->pluck('name')->implode(', ');
             $data->delete();
 
             return response()->json([
-                'message' => "<b>$count</b> Role berhasil dihapus<p><b>$text</b></p>"
+                'message' => "<b>$count</b> Experiment berhasil dihapus<p><b>$text</b></p>"
             ], 200);
         }else{
-            $data = Role::find($id[0]);
+            $data = Experiment::find($id[0]);
             $data->destroy($id);
     
             return response()->json([
-                'message' => "Role <b><i>$data->name</i></b> berhasil dihapus"
+                'message' => "Experiment <b><i>$data->name</i></b> berhasil dihapus"
             ], 200);
         }
     }

@@ -20,6 +20,10 @@ let datatable = $('.datatable').DataTable({
     serverSide: true,
     responsive: true,
     stateSave: true,
+    scrollX: true,
+    fixedHeader: true,
+    scrollCollapse: true,
+    scrollY: '500px',
     select:'multi',
     ajax: {
         url: $(".route").html(),
@@ -46,7 +50,17 @@ let datatable = $('.datatable').DataTable({
             className: 'btn btn-danger btn-sm ',
         }
     ],
+    "createdRow": function (row, data, dataIndex) {
+        $(row).addClass('responsive-font');
+    },
     initComplete: function () {
+        // PADDING THEAD
+        $('.datatable thead th').css({
+            'padding-top':'5px',
+            'padding-bottom':'5px',
+        });
+
+        // SELECTED
         var api = this.api();
         
         api.on('select deselect', function (e, dt, type, indexes) {
@@ -61,7 +75,7 @@ let datatable = $('.datatable').DataTable({
             }
         });
         
-    }
+    },
 });
 
 
@@ -263,16 +277,13 @@ function showView(view) {
             }    
         });
         $(".view-"+view).show(500);
-        
-        $(".btn-heading .btn-back").show(500);
-        $(".btn-heading button:not(.btn-back)").hide();
     }else{
-        $(".btn-heading .btn-back").hide();
-        $(".btn-heading button:not(.btn-back)").show(500);
-
         $(".view-"+view).show(500);
         $(".view-"+view+" .card-body").show(500);
     }
+    $(`[data-show*='${view}']`).show(500);
+    $(`[data-show]:not([data-show*='${view}'])`).hide();
+
     $(":focus").removeAttr("autofocus");
     $(".view-"+view+" form input:visible:not(:hidden):first").focus();
 }

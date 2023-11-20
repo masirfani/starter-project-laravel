@@ -1,3 +1,21 @@
+/* data table font size */
+/* Default font size */
+table.datatable .responsive-font td {
+    font-size: 14px;
+}
+
+@media screen and (max-width: 768px) {
+    table.datatable .responsive-font td {
+        font-size: 13px;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    table.datatable .responsive-font td {
+        font-size: 16px;
+    }
+}
+
 .route{
     display: none;
 }

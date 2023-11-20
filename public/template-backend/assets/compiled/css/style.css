@@ -4,15 +4,27 @@ table.datatable .responsive-font td {
     font-size: 14px;
 }
 
+.responsive-title{
+    font-size: 22px;
+}
+
 @media screen and (max-width: 768px) {
     table.datatable .responsive-font td {
         font-size: 13px;
+    }
+
+    .responsive-title{
+        font-size: 15px;
     }
 }
 
 @media screen and (min-width: 1200px) {
     table.datatable .responsive-font td {
         font-size: 16px;
+    }
+
+    .responsive-title{
+        font-size: 24px;
     }
 }
 

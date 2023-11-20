@@ -2,80 +2,88 @@ let selectedId = [];
 let getAttr = $(".btn-delete").parents("form").attr("action");
 
 // READ DATA
-let datatable = $('.datatable').DataTable({
-    pagingType: 'simple',
-    dom:
-    "<'row g-0'<'col-12 col-md-6 d-flex gap-1'lB><'col-12 col-md-6'f>>" +
-    "<'row dt-row'<'col-sm-12'tr>>" +
-    "<'row'<'col-7'i><'col-5'p>>",
-    "language": {
-        "info": "Page <b>_PAGE_</b> of <b>_PAGES_</b>",
-        "infoFiltered": "(<b>Total _MAX_</b>)",
-        "lengthMenu": "_MENU_ ",
-        "search": "",
-        "searchPlaceholder": "Cari sesuatu..."
-    },
-    lengthMenu: [10, 50, 100, 1000],
-    processing: true,
-    serverSide: true,
-    responsive: true,
-    stateSave: true,
-    scrollX: true,
-    fixedHeader: true,
-    scrollCollapse: true,
-    scrollY: '500px',
-    select:'multi',
-    ajax: {
-        url: $(".route").html(),
-        type: 'GET'
-    },
-    columns: columnConfigs,
-    buttons: [
-        {
-            extend: 'copy',
-            text: '<i class="fa fa-copy"></i> <small>Copy</small>',
-            titleAttr: 'Copy',
-            className: 'btn btn-secondary btn-sm ',
+$(document).ready(function(){
+    let datatable = $('.datatable').DataTable({
+        pagingType: 'simple',
+        dom:
+        "<'row g-0'<'col-12 col-md-6 d-flex gap-1'lB><'col-12 col-md-6'f>>" +
+        "<'row dt-row'<'col-sm-12'tr>>" +
+        "<'row'<'col-7'i><'col-5'p>>",
+        "language": {
+            "info": "Page <b>_PAGE_</b> of <b>_PAGES_</b>",
+            "infoFiltered": "(<b>Total _MAX_</b>)",
+            "lengthMenu": "_MENU_ ",
+            "search": "",
+            "searchPlaceholder": "Cari sesuatu..."
         },
-        {
-            extend: 'excel',
-            text: '<i class="fa fa-file-excel"></i> <small>Excel</small>',
-            titleAttr: 'Export to Excel',
-            className: 'btn btn-success btn-sm ',
+        lengthMenu: [10, 50, 100, 1000],
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        stateSave: true,
+        scrollX: true,
+        fixedHeader: true,
+        scrollCollapse: true,
+        scrollY: '500px',
+        select:'multi',
+        ajax: {
+            url: $(".route").html(),
+            type: 'GET'
         },
-        {
-            extend: 'pdf',
-            text: '<i class="fa fa-file-pdf"></i> <small>PDF</small>',
-            titleAttr: 'Export to PDF',
-            className: 'btn btn-danger btn-sm ',
-        }
-    ],
-    "createdRow": function (row, data, dataIndex) {
-        $(row).addClass('responsive-font');
-    },
-    initComplete: function () {
-        // PADDING THEAD
-        $('.datatable thead th').css({
-            'padding-top':'5px',
-            'padding-bottom':'5px',
-        });
-
-        // SELECTED
-        var api = this.api();
-        
-        api.on('select deselect', function (e, dt, type, indexes) {
-            if (type === 'row') {
-                var selectedRows = api.rows({ selected: true });
-                selectedId = selectedRows.data().pluck('id').toArray();
-
-                let dataId = selectedId.join(',');
-        
-                $(".selected-id").html(dataId);
-                $(".btn-delete").parents("form").attr("action", `${getAttr}/${dataId}`);
+        columns: columnConfigs,
+        buttons: [
+            {
+                extend: 'copy',
+                text: '<i class="fa fa-copy"></i> <small>Copy</small>',
+                titleAttr: 'Copy',
+                className: 'btn btn-secondary btn-sm ',
+            },
+            {
+                extend: 'excel',
+                text: '<i class="fa fa-file-excel"></i> <small>Excel</small>',
+                titleAttr: 'Export to Excel',
+                className: 'btn btn-success btn-sm ',
+            },
+            {
+                extend: 'pdf',
+                text: '<i class="fa fa-file-pdf"></i> <small>PDF</small>',
+                titleAttr: 'Export to PDF',
+                className: 'btn btn-danger btn-sm ',
             }
-        });
-        
-    },
+        ],
+        "createdRow": function (row, data, dataIndex) {
+            $(row).addClass('responsive-font');
+        },
+        initComplete: function () {
+            // SELECTED
+            var api = this.api();
+            
+            api.on('select deselect', function (e, dt, type, indexes) {
+                if (type === 'row') {
+                    var selectedRows = api.rows({ selected: true });
+                    selectedId = selectedRows.data().pluck('id').toArray();
+    
+                    let dataId = selectedId.join(',');
+            
+                    $(".selected-id").html(dataId);
+                    $(".btn-delete").parents("form").attr("action", `${getAttr}/${dataId}`);
+                }
+            });
+    
+            // $('.datatable thead th').css({
+            //     'padding-top':'5px',
+            //     'padding-bottom':'5px',
+            //     'width':'100px',
+            // });
+            // $('.datatable .dataTables_scrollHeadInner').css({
+            //     'width': 'nowrap',
+            // });
+            
+        },
+    });
+
+    // solved error thead tidak lurus
+    reloadTable();
 });
 
 
@@ -83,6 +91,8 @@ $(".btn-delete").parents("form").submit(function(e){
     e.preventDefault();
     ajaxCrud($(this), 'delete');
 });
+
+
 
 function reloadTable(){
     $(".datatable").DataTable().ajax.reload(function(){
@@ -274,6 +284,7 @@ function showView(view) {
 
                 $(":focus").removeAttr("autofocus");
                 $(".view-"+view+" form input:visible:not(:hidden):first").focus();
+                datatable.columns.adjust();
             }    
         });
         $(".view-"+view).show(500);
@@ -313,3 +324,4 @@ function showMsg(response, type) {
 $(window).on('resize', function() {
     datatable.columns.adjust();
 });
+

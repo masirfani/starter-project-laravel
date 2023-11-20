@@ -22,18 +22,18 @@ class ExperinmentController extends Controller
             ->editColumn('status', function($see){
                 return ($see->is_active) ? '<span class="badge text-bg-success">Active</span>' : '<span class="badge text-bg-danger">No</span>';
             })
-            ->filter(function ($query) use ($request) {
-                if ($request->input('search')["value"]) {
-                    $data = "";
-                    if ($request->input('search')["value"] == "active") {
-                        $data = 1;
-                    }
-                    if ($request->input('search')["value"] == "no") {
-                        $data = 0;
-                    }
-                    $query->where('is_active', 'LIKE', '%' . $data . '%');
-                }
-            })
+            // ->filter(function ($query) use ($request) {
+            //     if ($request->input('search')["value"]) {
+            //         if ($request->input('search')["value"] == "active") {
+            //             $data = 1;
+            //             $query->where('is_active', 'LIKE', '%' . $data . '%');
+            //         }
+            //         if ($request->input('search')["value"] == "no") {
+            //             $data = 0;
+            //             $query->where('is_active', 'LIKE', '%' . $data . '%');
+            //         }
+            //     }
+            // })
             ->rawColumns(['status'])
             ->toJson();
         }
@@ -43,7 +43,7 @@ class ExperinmentController extends Controller
             ['title' => 'Nama', 'data'  => 'name',        'name' => 'name'],
             ['title' => 'Agama', 'data' => 'religion',    'name' => 'religion'],
             ['title' => 'Nilai', 'data' => 'nilai',       'name' => 'nilai'],
-            ['title' => 'Status', 'data' => 'status',     'name' => 'status'],
+            ['title' => 'Status', 'data' => 'status',     'name' => 'is_active'],
         ];
 
         return view('experiment.experiment',[

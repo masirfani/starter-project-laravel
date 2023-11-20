@@ -96,14 +96,14 @@
                 </div>
             </div>
         </div>
-        <div id="main" class='layout-navbar mt-3'>
-            <div id="main-content" class="pt-0">
-                <div class="page-heading">
+        <div id="main" class='layout-navbar mt-4'>
+            <div id="main-content" class="py-0">
+                <div class="page-heading mb-0">
                     <div class="page-title px-2">
                         <div class="row">
                             <div class="col-12 col-md-12 d-flex justify-content-between">
                                 <div>
-                                    <h6>@yield('heading')</h6>
+                                    <h4 class="responsive-title">@yield('heading')</h4>
                                     <p class="text-subtitle text-muted">@yield('sub-heading')</p>
                                 </div>
                                 <div>

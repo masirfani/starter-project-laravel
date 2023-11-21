@@ -2,6 +2,14 @@
 /* Default font size */
 table.datatable .responsive-font td {
     font-size: 14px;
+    white-space: nowrap
+}
+
+.toast-close{
+    position: absolute;
+    top: -5px; /* Adjust this value for positioning */
+    right: -5px; /* Adjust this value for positioning */
+    z-index: 9999; /* Ensure it's above other elements */
 }
 
 .responsive-title{

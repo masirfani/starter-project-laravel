@@ -99,12 +99,17 @@
         <div id="main" class='layout-navbar mt-4'>
             <div id="main-content" class="py-0">
                 <div class="page-heading mb-0">
-                    <div class="page-title px-2">
+                    <div class="page-title px-2 mb-1">
                         <div class="row">
-                            <div class="col-12 col-md-12 d-flex justify-content-between">
+                            <div class="col-12 col-md-12 d-flex justify-content-between align-items-center">
+                                <div class="d-block d-xl-none">
+                                    <a href="#">
+                                        <i class="bi bi-justify fs-3"></i>
+                                    </a>
+                                </div>
                                 <div>
-                                    <h4 class="responsive-title">@yield('heading')</h4>
-                                    <p class="text-subtitle text-muted">@yield('sub-heading')</p>
+                                    <h4 class="responsive-title m-0">@yield('heading')</h4>
+                                    <p class="text-subtitle text-muted m-0">@yield('sub-heading')</p>
                                 </div>
                                 <div>
                                     @yield('heading-right')

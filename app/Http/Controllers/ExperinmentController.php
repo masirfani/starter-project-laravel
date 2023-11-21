@@ -22,19 +22,15 @@ class ExperinmentController extends Controller
             ->editColumn('status', function($see){
                 return ($see->is_active) ? '<span class="badge text-bg-success">Active</span>' : '<span class="badge text-bg-danger">No</span>';
             })
-            // ->filter(function ($query) use ($request) {
-            //     if ($request->input('search')["value"]) {
-            //         if ($request->input('search')["value"] == "active") {
-            //             $data = 1;
-            //             $query->where('is_active', 'LIKE', '%' . $data . '%');
-            //         }
-            //         if ($request->input('search')["value"] == "no") {
-            //             $data = 0;
-            //             $query->where('is_active', 'LIKE', '%' . $data . '%');
-            //         }
-            //     }
-            // })
             ->rawColumns(['status'])
+            ->filterColumn('is_active', function($query, $keyword) {
+                if ($keyword == "active") {
+                    $query->where('is_active', 1);
+                }
+                if ($keyword == "no") {
+                    $query->where('is_active', 0);
+                }
+            })
             ->toJson();
         }
 
@@ -80,7 +76,7 @@ class ExperinmentController extends Controller
         $data = Experiment::create($validate->valid());
 
         return response()->json([
-            'message' => "Experiment <b><i>$data->name</i></b> berhasil ditambahkan"
+            'message' => "Experiment <b>$data->name</b> berhasil ditambahkan"
         ], 201);
     }
 
@@ -130,7 +126,7 @@ class ExperinmentController extends Controller
         $data->update($validate->valid());
 
         return response()->json([
-            'message' => "Experiment <b><i>$data->name</i></b> berhasil dirubah"
+            'message' => "Experiment <b>$data->name</b> berhasil dirubah"
         ], 201);
     }
 
@@ -154,7 +150,7 @@ class ExperinmentController extends Controller
             $data->destroy($id);
     
             return response()->json([
-                'message' => "Experiment <b><i>$data->name</i></b> berhasil dihapus"
+                'message' => "Experiment <b>$data->name</b> berhasil dihapus"
             ], 200);
         }
     }

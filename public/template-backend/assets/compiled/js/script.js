@@ -71,15 +71,6 @@ $(document).ready(function(){
                 }
             });
     
-            // $('.datatable thead th').css({
-            //     'padding-top':'5px',
-            //     'padding-bottom':'5px',
-            //     'width':'100px',
-            // });
-            // $('.datatable .dataTables_scrollHeadInner').css({
-            //     'width': 'nowrap',
-            // });
-            
         },
     });
 
@@ -301,12 +292,18 @@ function showView(view) {
 }
 
 function showMsg(response, type) {
+    const isMobile = window.matchMedia("only screen and (max-width: 768px)").matches;
+    const position = isMobile ? 'top' : 'top-end';
 
     const Toast = Swal.mixin({
         toast: true,
-        position: 'top-end',
+        position: position,
         showConfirmButton: false,
         timer: 3000,
+        showCloseButton:true,
+        customClass: {
+            closeButton: 'toast-close'
+        },
         timerProgressBar: true,
         padding:10,
         didOpen: (toast) => {

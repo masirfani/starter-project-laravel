@@ -38,7 +38,7 @@ class ExperinmentController extends Controller
             ['title' => 'No',   'data'  => 'DT_RowIndex', 'name' => 'id', 'searchable' => false, 'className' => 'dt-no text-center'],
             ['title' => 'Nama', 'data'  => 'name',        'name' => 'name'],
             ['title' => 'Agama', 'data' => 'religion',    'name' => 'religion'],
-            ['title' => 'Nilai', 'data' => 'nilai',       'name' => 'nilai'],
+            ['title' => 'Nilai', 'data' => 'score',       'name' => 'score'],
             ['title' => 'Status', 'data' => 'status',     'name' => 'is_active'],
         ];
 
@@ -61,9 +61,14 @@ class ExperinmentController extends Controller
      */
     public function store(Request $request)
     {
-
+        dd($request->all());
         $validate = Validator::make($request->all(), [
-            "name" => "required",
+            "name"       => "required",
+            "religion"   => "required",
+            "picture"    => "required|image|mimes:jpeg,png,jpg|max:300",
+            "score"      => "required",
+            "birth_date" => "required",
+            "address"    => "required",
         ]);
 
         if ($validate->fails()) {
@@ -73,7 +78,20 @@ class ExperinmentController extends Controller
             ], 422);
         }
 
-        $data = Experiment::create($validate->valid());
+        $validate = $validate->valid(); 
+        
+        if (!empty($validate['picture']))  {
+            $file = $request->picture;
+            // proses upload file picture ke folder project kita
+            $file      = $request->picture;
+            $file_name = strtolower($request->code)."-".strtolower($request->location).date("dmyHis").".".$file->getClientOriginalExtension();
+            $file_name = str_replace(' ', '', $file_name);
+            $file->move(public_path("uploads/experiment/"), $file_name);
+            $validate["picture"] = $file_name;
+        }
+        $validate['is_active'] = 1;
+
+        $data = Experiment::create($validate);
 
         return response()->json([
             'message' => "Experiment <b>$data->name</b> berhasil ditambahkan"
@@ -111,8 +129,14 @@ class ExperinmentController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        dd($request->all());
         $validate = Validator::make($request->all(), [
-            "name" => "required",
+            "name"       => "required",
+            "religion"   => "required",
+            "picture"    => "nullable|image|mimes:jpeg,png,jpg|max:300",
+            "score"      => "required",
+            "birth_date" => "required",
+            "address"    => "required",
         ]);
 
         if ($validate->fails()) {
@@ -122,8 +146,23 @@ class ExperinmentController extends Controller
             ], 422);
         }
 
+        $validate = $validate->valid(); 
+        
+        if (empty($validate['picture']))  {
+            unset($validate["picture"]);
+        }else{
+            $file = $request->picture;
+            // proses upload file picture ke folder project kita
+            $file      = $request->picture;
+            $file_name = strtolower($request->code)."-".strtolower($request->location).date("dmyHis").".".$file->getClientOriginalExtension();
+            $file_name = str_replace(' ', '', $file_name);
+            $file->move(public_path("uploads/experiment/"), $file_name);
+            $validate["picture"] = $file_name;
+
+        }
+
         $data = Experiment::find($id);
-        $data->update($validate->valid());
+        $data->update($validate);
 
         return response()->json([
             'message' => "Experiment <b>$data->name</b> berhasil dirubah"

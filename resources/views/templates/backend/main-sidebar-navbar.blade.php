@@ -103,7 +103,7 @@
                         <div class="row">
                             <div class="col-12 col-md-12 d-flex justify-content-between align-items-center">
                                 <div class="d-block d-xl-none">
-                                    <a href="#">
+                                    <a href="#" class="burger-btn d-block">
                                         <i class="bi bi-justify fs-3"></i>
                                     </a>
                                 </div>

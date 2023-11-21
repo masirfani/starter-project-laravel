@@ -1,10 +1,12 @@
+showView("data");
 let selectedId = [];
 let getAttr = $(".btn-delete").parents("form").attr("action");
 
 // READ DATA
 var windowHeight = Number($(window).height()) - 270;
+let datatable = "";
 $(document).ready(function(){
-    let datatable = $('.datatable').DataTable({
+    datatable =  $('.datatable').DataTable({
         pagingType: 'simple',
         dom:
         "<'row g-0'<'col-12 col-md-6 d-flex gap-1'lB><'col-12 col-md-6'f>>" +
@@ -78,14 +80,6 @@ $(document).ready(function(){
     reloadTable();
 });
 
-
-$(".btn-delete").parents("form").submit(function(e){
-    e.preventDefault();
-    ajaxCrud($(this), 'delete');
-});
-
-
-
 function reloadTable(){
     $(".datatable").DataTable().ajax.reload(function(){
         $(this).fadeIn('slow');
@@ -104,12 +98,11 @@ $(".btn-back").click(function(){
 // SUBMIT FORM / CREATE DATA
 $(".view-form form").submit(function(e){
     e.preventDefault();
-    ajaxCrud($(this), 'form');
+    ajaxCrud(this, 'form');
 });
 
 // EDIT MOMENT
 $("body").on("click", ".btn-edit", function(){
-    console.log(selectedId);
     if(selectedId.length == 0){
         showMsg('Pilih data dari table dulu!!!', 'info')
     }else if(selectedId.length > 1){
@@ -129,7 +122,17 @@ $("body").on("click", ".btn-edit", function(){
     
                 data.forEach(function(see, number){
                     Object.keys(see).forEach(function(key){
-                        $('.view-edit [name="'+key+'"]').val(see[key])
+                        if (typeof see[key] === 'string') {
+                            let dataEdit = see[key].split('.');
+                            let typeImage = ["jpg", "jpeg", "png"];
+                            if (typeImage.includes(dataEdit[dataEdit.length - 1])) {
+                                $('.view-edit [name="old_'+key+'"]').val(see[key]);
+                            }else{       
+                                $('.view-edit [name="'+key+'"]').val(see[key]);
+                            }
+                        }else{
+                            $('.view-edit [name="'+key+'"]').val(see[key]);
+                        }
                     });
                 });
     
@@ -146,7 +149,7 @@ $("body").on("click", ".btn-edit", function(){
 // SUBMIT EDIT / UPDATE DATA
 $(".view-edit form").submit(function(e){
     e.preventDefault();
-    ajaxCrud($(this), 'edit');
+    ajaxCrud(this, 'edit');
 });
 
 // DELETE MOMENT
@@ -167,6 +170,8 @@ $("body").on("click", ".btn-delete", function(){
         }).then((result) => {
             if (result.isConfirmed) {
                 ajaxCrud(form, "delete");
+                e.preventDefault();
+                ajaxCrud(this, 'delete');
             }
         });
     }
@@ -213,10 +218,16 @@ $("body").on("click", ".btn-detail", function(){
 
 function ajaxCrud(form, view){
     $(".error-message").remove();
+    var dataForm = new FormData(form);
+    form = $(form);
+    console.log(dataForm);
     $.ajax({
         url:  form.attr("action"),
         type: form.attr("method"),
-        data: form.serialize(),
+        data: dataForm,
+        enctype: form.attr("enctype"),
+        processData: false,
+        contentType: false,
         headers: {
             'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content')
         },
@@ -231,27 +242,29 @@ function ajaxCrud(form, view){
             if ($(`.view-${view} form`)[0]) {
                 $(`.view-${view} form`)[0].reset();
             }
-            $(`.view-${view} form .is-invalid`).removeClass("is-invalid");
+            
         },
         error: function(data, status, xhr){
             showMsg(data, status);
 
             if (data.responseJSON.errors != null) {
+                $(`.view-${view} [name]`).removeClass("is-valid");
+                $(`.view-${view} [name]`).removeClass("is-invalid");
                 Object.keys(data.responseJSON.errors).forEach(function (see) {
                     var errorMessages = data.responseJSON.errors[see];
 
-                    var pesan = `
-                        <p class="error-message text-danger mb-0">${errorMessages}</p>
-                    `;
+                    var pesan = `<p class="error-message text-danger mb-0">${errorMessages}</p>`;
+
                     $(`.view-${view} [name="${see}"]`).addClass("is-invalid"); 
                     $(`.view-${view} [name="${see}"]`).after(pesan); 
                 });
+                $(`.view-${view} [name]:not(.is-invalid)`).addClass("is-valid");
             }
         }
     });
 }
 
-showView("data");
+
 function showView(view) {
     $(".view-data").hide();
     $("[class*=view-]").hide();
@@ -273,6 +286,7 @@ function showView(view) {
             ajaxStop: function() { 
                 $(".loading").remove();
                 $(".view-"+view+" .card-body").show();
+
 
                 $(":focus").removeAttr("autofocus");
                 $(".view-"+view+" form input:visible:not(:hidden):first").focus();

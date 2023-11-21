@@ -16,10 +16,10 @@ return new class extends Migration
             $table->string('name');
             $table->string('religion');
             $table->string('picture');
-            $table->integer('nilai');
+            $table->integer('score');
             $table->boolean('is_active');
             $table->date('birth_date');
-            $table->text('birth_location');
+            $table->text('address');
             $table->timestamps();
         });
     }

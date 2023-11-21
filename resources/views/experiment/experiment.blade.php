@@ -9,7 +9,7 @@
         <button type="button" class="btn btn-danger btn-sm btn-delete" data-show="data"><i class="fa fa-trash"></i></button>
         <button type="button" class="btn btn-success btn-sm btn-add " data-show="data"><i class="fa fa-plus"></i></button>
         
-        <button type="button" class="btn btn-success btn-sm " data-show="form"><i class="bi bi-file-excel"></i> Import excel</button>
+        {{-- <button type="button" class="btn btn-success btn-sm " data-show="form"><i class="bi bi-file-excel"></i> Import excel</button> --}}
         <button type="button" class="btn btn-dark btn-sm btn-back " data-show="form,edit,detail"><i class="fa fa-angle-left"></i></button>
     </form>
 @endsection
@@ -42,11 +42,43 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <form action="{{ route("$route.store") }}" method="POST">
+                    <form action="" method="POST" class="row row-gap-2" enctype="multipart/form-data">
                         @csrf
-                        <label>Nama Role</label>
-                        <input type="text" name="name" class="form-control" placeholder="Masukkan nama role...">
-                        <button type="submit" class="btn btn-primary btn-sm mt-2"><i class="fa fa-paper-plane"></i> Tambah</button>
+                        <div class="col-md-6">
+                            <label>Nama</label>
+                            <input type="text" name="name" class="form-control" placeholder="Masukkan nama role...">
+                        </div>
+                        <div class="col-md-6">
+                            <label>Agama</label>
+                            <select name="religion" class="form-select">
+                                <option value="" selected disabled>- Pilih Agama -</option>
+                                <option value="islam">islam</option>
+                                <option value="kristen">kristen</option>
+                                <option value="hindu">hindu</option>
+                                <option value="buddha">buddha</option>
+                                <option value="konghucu">konghucu</option>
+                                <option value="katolik">katolik</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Nilai</label>
+                            <input type="number" name="score" class="form-control" placeholder="Masukkan nama role...">
+                        </div>
+                        <div class="col-md-6">
+                            <label>Tanggal Lahir</label>
+                            <input type="date" name="birth_date" class="form-control" placeholder="Masukkan nama role...">
+                        </div>
+                        <div class="col-md-6">
+                            <label>Foto</label>
+                            <input type="file" name="picture" class="form-control" placeholder="Masukkan nama role...">
+                        </div>
+                        <div class="col-md-6">
+                            <label>Alamat</label>
+                            <textarea name="address" class="form-control" placeholder="Masukkan alamat"></textarea>
+                        </div>
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-primary btn-sm mt-2"><i class="fa fa-paper-plane"></i> Tambah</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -58,11 +90,44 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <form action="" method="PUT">
+                    <form action="" method="PUT" class="row" enctype="multipart/form-data">
                         @csrf
-                        <label>Nama Role</label>
-                        <input type="text" name="name" class="form-control" placeholder="Masukkan nama role...">
-                        <button type="submit" class="btn btn-warning btn-sm mt-2"><i class="fa fa-paper-plane"></i> Edit</button>
+                        <div class="col-md-6">
+                            <label>Nama</label>
+                            <input type="text" name="name" class="form-control" placeholder="Masukkan nama role...">
+                        </div>
+                        <div class="col-md-6">
+                            <label>Agama</label>
+                            <select name="religion" class="form-select">
+                                <option value="" selected disabled>- Pilih Agama -</option>
+                                <option value="islam">islam</option>
+                                <option value="kristen">kristen</option>
+                                <option value="hindu">hindu</option>
+                                <option value="buddha">buddha</option>
+                                <option value="konghucu">konghucu</option>
+                                <option value="katolik">katolik</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Nilai</label>
+                            <input type="number" name="score" class="form-control" placeholder="Masukkan nama role...">
+                        </div>
+                        <div class="col-md-6">
+                            <label>Tanggal Lahir</label>
+                            <input type="date" name="birth_date" class="form-control" placeholder="Masukkan nama role...">
+                        </div>
+                        <div class="col-md-6">
+                            <label>Foto</label>
+                            <input type="file" name="picture" class="form-control" placeholder="Masukkan nama role...">
+
+                        </div>
+                        <div class="col-md-6">
+                            <label>Alamat</label>
+                            <textarea name="address" class="form-control" placeholder="Masukkan alamat"></textarea>
+                        </div>
+                        <div class="col-md-12">
+                            <button type="submit" class="btn btn-warning btn-sm mt-2"><i class="fa fa-pencil"></i> Edit</button>
+                        </div>
                     </form>
                 </div>
             </div>

@@ -16,15 +16,15 @@ class ExperimentFactory extends Factory
      */
     public function definition(): array
     {
-        $religion = ["islam", "kristen", "hindu", "buddha", "konhucu", "katolik"];
+        $religion = ["islam", "kristen", "hindu", "buddha", "konghucu", "katolik"];
         return [
             "name"           => fake()->name,
             "religion"       => $religion[rand(0, count($religion)-1)],
             "picture"        => "default.png",
-            "nilai"          => rand(1,100),
+            "score"          => rand(1,100),
             "is_active"      => rand(0, 1),
             "birth_date"     => fake()->date,
-            "birth_location" => fake()->word,
+            "address"        => fake()->word,
         ];
     }
 }

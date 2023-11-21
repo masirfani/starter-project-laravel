@@ -3,7 +3,8 @@
 @section('title', 'Experiment')
 @section('heading', 'Experiment Management')
 @section('heading-right')
-    <form action="{{ route("$route.destroy", '') }}" method="DELETE" class="btn-heading">
+    <form action="{{ route("$route.destroy", '') }}" method="POST" class="btn-heading">
+        @method('DELETE')
         <button type="button" class="btn btn-info btn-sm btn-detail" data-show="data"><i class="bi bi-info"></i></button>
         <button type="button" class="btn btn-warning btn-sm btn-edit" data-show="data"><i class="bi bi-pencil"></i></button>
         <button type="button" class="btn btn-danger btn-sm btn-delete" data-show="data"><i class="fa fa-trash"></i></button>
@@ -90,8 +91,9 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-body">
-                    <form action="" method="PUT" class="row" enctype="multipart/form-data">
+                    <form action="" method="POST" class="row" enctype="multipart/form-data">
                         @csrf
+                        @method('PUT')
                         <div class="col-md-6">
                             <label>Nama</label>
                             <input type="text" name="name" class="form-control" placeholder="Masukkan nama role...">
@@ -119,7 +121,7 @@
                         <div class="col-md-6">
                             <label>Foto</label>
                             <input type="file" name="picture" class="form-control" placeholder="Masukkan nama role...">
-
+                            <input type="hidden" name="old_picture" class="form-control" placeholder="Masukkan nama role...">
                         </div>
                         <div class="col-md-6">
                             <label>Alamat</label>

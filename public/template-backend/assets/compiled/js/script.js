@@ -169,12 +169,15 @@ $("body").on("click", ".btn-delete", function(){
             cancelButtonText: "Tidak",
         }).then((result) => {
             if (result.isConfirmed) {
-                ajaxCrud(form, "delete");
-                e.preventDefault();
-                ajaxCrud(this, 'delete');
+                form.submit();
             }
         });
     }
+});
+
+$(".btn-delete").parents("form").submit(function(e){
+    e.preventDefault();
+    ajaxCrud(this, 'delete');
 });
 
 

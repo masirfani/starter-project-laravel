@@ -128,7 +128,7 @@
                             <textarea name="address" class="form-control" placeholder="Masukkan alamat"></textarea>
                         </div>
                         <div class="col-md-12">
-                            <button type="submit" class="btn btn-warning btn-sm mt-2"><i class="fa fa-pencil"></i> Edit</button>
+                            <button type="submit" class="btn btn-warning btn-sm mt-2"><i class="bi bi-pencil"></i> Edit</button>
                         </div>
                     </form>
                 </div>
@@ -144,20 +144,36 @@
                     <div class="row">
                         <div class="col-6">
                             <b>Nama</b>
-                            <p class="ps-1"><span class="detail-name"></span></p>
+                            <p class="ps-1">__name__</p>
                         </div>
                         <div class="col-6">
                             <b>Agama</b>
-                            <p class="ps-1"><span class="detail-religion"></span></p>
+                            <p class="ps-1">__religion__</p>
+                        </div>
+                        <div class="col-6">
+                            <b>Nilai</b>
+                            <p class="ps-1">__score__</p>
+                        </div>
+                        <div class="col-6">
+                            <b>Tanggal</b>
+                            <p class="ps-1">__birth_date__</span></p>
+                        </div>
+                        <div class="col-6">
+                            <b>Foto</b>
+                            <img class="img-fluid" src="{{ asset('uploads/experiment') }}/__picture__" alt="">
+                        </div>
+                        <div class="col-6">
+                            <b>Alamat</b>
+                            <p class="ps-1">__address__</p>
                         </div>
                         <div class="w-100">
                             <hr>
                         </div>
                         <div class="col-6">
-                            <p><small><b>Created :</b> <span class="detail-created_on"></span></small></p>
+                            <p><small><b>Created :</b> __created_on__</small></p>
                         </div>
                         <div class="col-6">
-                            <p><small><b>Edited :</b> <span class="detail-updated_on"></span></small></p>
+                            <p><small><b>Edited :</b> __updated_on__</small></p>
                         </div>
                     </div>
                 </div>

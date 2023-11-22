@@ -131,7 +131,7 @@ class ExperinmentController extends Controller
         $validate = Validator::make($request->all(), [
             "name"       => "required",
             "religion"   => "required",
-            "picture"    => "nullable|image|mimes:jpeg,png,jpg|max:300",
+            "picture"    => "nullable|image|mimes:jpeg,png,jpg|max:1000",
             "score"      => "required",
             "birth_date" => "required",
             "address"    => "required",

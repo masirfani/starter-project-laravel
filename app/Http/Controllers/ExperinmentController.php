@@ -64,10 +64,11 @@ class ExperinmentController extends Controller
         $validate = Validator::make($request->all(), [
             "name"       => "required",
             "religion"   => "required",
-            "picture"    => "required|image|mimes:jpeg,png,jpg|max:300",
+            "picture"    => "required|image|mimes: jpeg,png,jpg|max: 300",
             "score"      => "required",
             "birth_date" => "required",
             "address"    => "required",
+            "is_active"  => "required",
         ]);
 
         if ($validate->fails()) {
@@ -88,7 +89,7 @@ class ExperinmentController extends Controller
             $file->move(public_path("uploads/experiment/"), $file_name);
             $validate["picture"] = $file_name;
         }
-        $validate['is_active'] = 1;
+        // $validate['is_active'] = 1;
 
         $data = Experiment::create($validate);
 

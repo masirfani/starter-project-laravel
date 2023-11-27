@@ -78,16 +78,16 @@ $(document).ready(function () {
     });
 
     // solved error thead tidak lurus
-    reloadTable();
+    // reloadTable();
+
+    
 });
 
 function reloadTable() {
-    $(".datatable")
-        .DataTable()
-        .ajax.reload(function () {
-            $(this).fadeIn("slow");
-            selectedId = [];
-        });
+    $(".datatable").DataTable().ajax.reload(function () {
+        $(this).fadeIn("slow");
+        selectedId = [];
+    });
 }
 
 // BUTTON MOVE
@@ -122,29 +122,7 @@ $("body").on("click", ".btn-edit", function () {
             },
             dataType: "json",
             success: function (data, status, xhr) {
-                data.forEach(function (see, number) {
-                    Object.keys(see).forEach(function (key) {
-                        if (typeof see[key] === "string") {
-                            let dataEdit = see[key].split(".");
-                            let typeImage = ["jpg", "jpeg", "png"];
-                            if (
-                                typeImage.includes(
-                                    dataEdit[dataEdit.length - 1]
-                                )
-                            ) {
-                                $('.view-edit [name="old_' + key + '"]').val(
-                                    see[key]
-                                );
-                            } else {
-                                $('.view-edit [name="' + key + '"]').val(
-                                    see[key]
-                                );
-                            }
-                        } else {
-                            $('.view-edit [name="' + key + '"]').val(see[key]);
-                        }
-                    });
-                });
+                populateForm(data);
 
                 $(".view-edit form").attr("action", url);
             },
@@ -184,12 +162,10 @@ $("body").on("click", ".btn-delete", function () {
     }
 });
 
-$(".btn-delete")
-    .parents("form")
-    .submit(function (e) {
-        e.preventDefault();
-        ajaxCrud(this, "delete");
-    });
+$(".btn-delete").parents("form").submit(function (e) {
+    e.preventDefault();
+    ajaxCrud(this, "delete");
+});
 
 // BUTTON DETAIL
 let dataDetail = $(".card-detail").html();
@@ -218,7 +194,7 @@ $("body").on("click", ".btn-detail", function () {
                 $(".card-detail").html(newDataDetail);
                 data.forEach(function (see, number) {
                     Object.keys(see).forEach(function (key) {
-                        replacePlaceholderWithData(key, [see[key]]);
+                        replacePatternInNode($(".view-detail"),key, [see[key]]);
                     });
                 });
             },
@@ -318,10 +294,8 @@ function showView(view) {
     $(".view-" + view + " form input:visible:not(:hidden):first").focus();
 }
 
-function showMsg(response, type) {
-    const isMobile = window.matchMedia(
-        "only screen and (max-width: 768px)"
-    ).matches;
+function showMsg(response, type) {  
+    const isMobile = window.matchMedia("only screen and (max-width: 768px)").matches;
     const position = isMobile ? "top" : "top-end";
 
     const Toast = Swal.mixin({
@@ -343,43 +317,119 @@ function showMsg(response, type) {
 
     Toast.fire({
         icon: type,
-        title:
-            response.message ||
-            (response.responseJSON && response.responseJSON.message) ||
-            response,
+        title: response.message || (response.responseJSON && response.responseJSON.message) || response,
     });
 }
 
-// replace ~x~ with some data
-function replacePlaceholderWithData(name, data) {
-    const placeholderRegex = new RegExp(`__${name}__`, "g");
-    let dataIndex = 0; // Keep track of the current index in the loop
-
-    document.querySelectorAll("*").forEach(function (element) {
-        console.log(element);
-        // Replace placeholders in element text content
-        Array.from(element.childNodes).forEach(function (node) {
-            if (node.nodeType === Node.TEXT_NODE) {
-                let content = node.textContent;
-                if (placeholderRegex.test(content) && dataIndex < data.length) {
-                    content = content.replace(placeholderRegex, data);
-                    node.textContent = content;
-                    dataIndex++; // Move to the next value in the loop
+function populateForm(data) {
+    data.forEach(function (item) {
+        Object.keys(item).forEach(function (key) {
+            let value = item[key];
+            if (typeof value === "string") {
+                let dataEdit = value.split(".");
+                let typeImage = ["jpg", "jpeg", "png"];
+                if (typeImage.includes(dataEdit[dataEdit.length - 1])) {
+                    $('.view-edit [name="old_' + key + '"]').val(value);
+                } else {
+                    $('.view-edit [name="' + key + '"]').val(value);
                 }
-            }
-        });
-
-        // Replace placeholders in element attributes
-        Array.from(element.attributes).forEach(function (attr) {
-            if (placeholderRegex.test(attr.value) && dataIndex < data.length) {
-                const updatedValue = attr.value.replace(placeholderRegex, data);
-                element.setAttribute(attr.name, updatedValue);
-                dataIndex++; // Move to the next value in the loop
+            } else if (typeof value === "number") {
+                // Handle number types by directly setting the value
+                $('.view-edit [name="' + key + '"]').val(value);
+            } else if (typeof value === "boolean") {
+                // Convert 1 and 0 to true and false for boolean fields
+                if (value === 1) {
+                    value = true;
+                } else if (value === 0) {
+                    value = false;
+                }
+                $('.view-edit [name="' + key + '"]').prop('checked', value);
+            } else {
+                // For other types of values (objects, arrays, etc.), handle as needed
+                $('.view-edit [name="' + key + '"]').val(value);
             }
         });
     });
 }
+
+
+// replace __x__ with some data
+function replacePatternInNode(element, name, data) {
+    const placeholderRegex = new RegExp(`__${name}__`, "g");
+    const node = element[0];
+
+    let dataIndex = 0; // index for the data
+
+    const replaceText = (textContent, regex, replacement) => {
+        return textContent.replace(regex, replacement);
+    };
+
+    const replaceAttributes = (attr, regex, replacement) => {
+        if (regex.test(attr.value)) {
+            const newValue = attr.value.replace(regex, replacement);
+            node.setAttribute(attr.name, newValue);
+        }
+    };
+
+    const handleNode = (node) => {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            const attributes = node.attributes;
+            for (let i = 0; i < attributes.length; i++) {
+                const attr = attributes[i];
+                replaceAttributes(attr, placeholderRegex, data); // Use direct data value
+            }
+        }
+
+        if (node.nodeType === Node.TEXT_NODE) {
+            node.textContent = replaceText(node.textContent, placeholderRegex, data); // Use direct data value
+        }
+
+        if (node.childNodes && node.childNodes.length > 0) {
+            node.childNodes.forEach((childNode) => {
+                handleNode(childNode);
+                dataIndex++; // Increment only within this recursive function if needed
+            });
+        }
+    };
+
+    handleNode(node);
+}
+
+
+
+// function replacePlaceholderWithData(name, data) {
+//     const placeholderRegex = new RegExp(`__${name}__`, "g");
+//     let dataIndex = 0; // Keep track of the current index in the loop
+
+//     // Select all elements within elements having class 'some-class'
+//     $('[class*="view-"]').find('*').each(function() {
+//         // Replace placeholders in element text content
+//         console.log("haui");
+//         $(this).contents().each(function () {
+//             if (this.nodeType === Node.TEXT_NODE) {
+//                 let content = $(this).text();
+//                 if (placeholderRegex.test(content) && dataIndex < data.length) {
+//                     content = content.replace(placeholderRegex, data[dataIndex]);
+//                     $(this).text(content);
+//                     dataIndex++; // Move to the next value in the loop
+//                 }
+//             }
+//         });
+
+//         // Replace placeholders in element attributes
+//         $.each(this.attributes, function () {
+//             if (placeholderRegex.test(this.value) && dataIndex < data.length) {
+//                 const updatedValue = this.value.replace(placeholderRegex, data[dataIndex]);
+//                 $(this.ownerElement).attr(this.name, updatedValue);
+//                 dataIndex++; // Move to the next value in the loop
+//             }
+//         });
+//     });
+// }
+
 
 $(window).on("resize", function () {
     datatable.columns.adjust();
 });
+
+// console.log();

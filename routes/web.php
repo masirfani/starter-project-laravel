@@ -20,7 +20,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    // return view('welcome');
+    return redirect()->route('auth.login');
 });
 Route::get('/sidebar', function () {
     return view('templates.backend.main-sidebar');

@@ -146,11 +146,11 @@
     <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/dataTables.select.min.js"></script>
     <script src="{{ asset('template-backend/assets') }}/extensions/datatables.net-bs5/js/pdfmake.min.js"></script>
     <script src="{{ asset('template-backend/assets') }}/static/js/pages/datatables.js"></script>
-    @stack('script')
     @isset($config_table)
-        <script>var columnConfigs = {!! $config_table !!};</script>
-        <script src="{{ asset('template-backend/assets/compiled/js/script.js') }}"></script>
+    <script>var columnConfigs = {!! $config_table !!};</script>
+    <script src="{{ asset('template-backend/assets/compiled/js/script.js') }}"></script>
     @endisset
+    @stack('script')
     @if (session()->has('alert'))
         <script>
             const Toast = Swal.mixin({

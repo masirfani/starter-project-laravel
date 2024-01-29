@@ -1,4 +1,4 @@
-showView("data");
+showView("form");
 let selectedId = [];
 let getAttr = $(".btn-delete").parents("form").attr("action");
 
@@ -76,11 +76,6 @@ $(document).ready(function () {
             });
         },
     });
-
-    // solved error thead tidak lurus
-    // reloadTable();
-
-    
 });
 
 function reloadTable() {
@@ -91,12 +86,32 @@ function reloadTable() {
 }
 
 // BUTTON MOVE
-$(".btn-add").click(function () {
-    showView("form");
-});
-$(".btn-back").click(function () {
-    showView("data");
-});
+function buttonMove(dataButton) {
+    for (var key in dataButton) {
+        (function(key) {
+            $("body").on("click", key, function () {
+                if (typeof dataButton[key] === "string") {
+                    showView(dataButton[key]);
+                } else if (Array.isArray(dataButton[key])) {
+                    // If the value is an array, assume the first element is the name of a function to call
+                    // and the remaining elements are functions to execute
+                    var action = dataButton[key][0];
+                    if (typeof action === "string" && typeof window[action] === "function") {
+                        window[action]();
+                    }
+                    for (var i = 1; i < dataButton[key].length; i++) {
+                        dataButton[key][i]();
+                    }
+                } else if (typeof dataButton[key] === "function") {
+                    dataButton[key]();
+                } else {
+                    showView(dataButton[key]);
+                }
+            });
+        })(key);
+    }
+}
+
 
 // SUBMIT FORM / CREATE DATA
 $(".view-form form").submit(function (e) {
@@ -106,31 +121,7 @@ $(".view-form form").submit(function (e) {
 
 // EDIT MOMENT
 $("body").on("click", ".btn-edit", function () {
-    if (selectedId.length == 0) {
-        showMsg("Pilih data dari table dulu!!!", "info");
-    } else if (selectedId.length > 1) {
-        showMsg("Hanya bisa 1 data yang di edit", "info");
-    } else {
-        showView("edit");
-        let form = $(this).parents("form");
-        let url = `${$(".route").html()}/${$(".selected-id").html()}`;
-        $.ajax({
-            url: url,
-            type: "GET",
-            headers: {
-                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-            },
-            dataType: "json",
-            success: function (data, status, xhr) {
-                populateForm(data);
-
-                $(".view-edit form").attr("action", url);
-            },
-            error: function (data, status, xhr) {
-                showMsg(data, status);
-            },
-        });
-    }
+    
 });
 
 // SUBMIT EDIT / UPDATE DATA
@@ -395,16 +386,13 @@ function replacePatternInNode(element, name, data) {
     handleNode(node);
 }
 
-
-
 // function replacePlaceholderWithData(name, data) {
 //     const placeholderRegex = new RegExp(`__${name}__`, "g");
 //     let dataIndex = 0; // Keep track of the current index in the loop
 
 //     // Select all elements within elements having class 'some-class'
-//     $('[class*="view-"]').find('*').each(function() {
+//     $('*').each(function() {
 //         // Replace placeholders in element text content
-//         console.log("haui");
 //         $(this).contents().each(function () {
 //             if (this.nodeType === Node.TEXT_NODE) {
 //                 let content = $(this).text();

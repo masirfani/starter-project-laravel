@@ -1,6 +1,7 @@
-showView("form");
+
 let selectedId = [];
 let getAttr = $(".btn-delete").parents("form").attr("action");
+let dataDetail = $(".card-detail").html();
 
 // READ DATA
 var windowHeight = Number($(window).height()) - 270;
@@ -76,6 +77,8 @@ $(document).ready(function () {
             });
         },
     });
+
+    reloadTable();
 });
 
 function reloadTable() {
@@ -89,21 +92,20 @@ function reloadTable() {
 function buttonMove(dataButton) {
     for (var key in dataButton) {
         (function(key) {
-            $("body").on("click", key, function () {
+            $("body").on("click", key, function (event) {
+                var button = $(event.target).closest(key);
                 if (typeof dataButton[key] === "string") {
                     showView(dataButton[key]);
+                } else if (typeof dataButton[key] === "function") {
+                    dataButton[key](button);
                 } else if (Array.isArray(dataButton[key])) {
-                    // If the value is an array, assume the first element is the name of a function to call
-                    // and the remaining elements are functions to execute
                     var action = dataButton[key][0];
                     if (typeof action === "string" && typeof window[action] === "function") {
-                        window[action]();
+                        window[action](button);
                     }
                     for (var i = 1; i < dataButton[key].length; i++) {
-                        dataButton[key][i]();
+                        dataButton[key][i](button);
                     }
-                } else if (typeof dataButton[key] === "function") {
-                    dataButton[key]();
                 } else {
                     showView(dataButton[key]);
                 }
@@ -113,16 +115,36 @@ function buttonMove(dataButton) {
 }
 
 
+function formAjax(){
+
+    new FormData(form)
+    $.ajax({
+        url     : url,
+        type    : form.attr("method"),
+        enctype : form.attr("enctype"),
+        data    : form.attr("enctype").serialize,
+        headers : {"X-CSRF-TOKEN": $('meta[name = "csrf-token"]').attr("content")},
+        processData: false,
+        contentType: false,
+        dataType:  "json",
+        success: function (data, status, xhr) {
+            populateForm(data);
+
+            $(".view-edit form").attr("action", url);
+        },
+        error: function (data, status, xhr) {
+            showMsg(data, status);
+        },
+    });
+}
+
+
 // SUBMIT FORM / CREATE DATA
 $(".view-form form").submit(function (e) {
     e.preventDefault();
     ajaxCrud(this, "form");
 });
 
-// EDIT MOMENT
-$("body").on("click", ".btn-edit", function () {
-    
-});
 
 // SUBMIT EDIT / UPDATE DATA
 $(".view-edit form").submit(function (e) {
@@ -130,77 +152,46 @@ $(".view-edit form").submit(function (e) {
     ajaxCrud(this, "edit");
 });
 
-// DELETE MOMENT
-$("body").on("click", ".btn-delete", function () {
-    if (selectedId.length == 0) {
-        showMsg("Pilih data dari table dulu!!!", "info");
-    } else {
-        let form = $(this).parents("form");
-        Swal.fire({
-            title: "Apakah anda yakin",
-            text: "Ingin menghapus semua data yang terpilih???",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#e74c3c",
-            cancelButtonColor: "#34495e",
-            confirmButtonText: "Iya",
-            cancelButtonText: "Tidak",
-        }).then((result) => {
-            if (result.isConfirmed) {
-                form.submit();
-            }
-        });
-    }
-});
-
 $(".btn-delete").parents("form").submit(function (e) {
     e.preventDefault();
     ajaxCrud(this, "delete");
 });
 
-// BUTTON DETAIL
-let dataDetail = $(".card-detail").html();
-$("body").on("click", ".btn-detail", function () {
-    if (selectedId.length == 0) {
-        showMsg("Pilih data dari table dulu!!!", "info");
-    } else {
-        showView("detail");
-        $(".card-detail").html(dataDetail);
-        let form = $(this).parents("form");
-        form.attr("action", "");
-        let url = `${$(".route").html()}/${$(".selected-id").html()}`;
+function ajax(url, method = 'GET', data = null, headers = {}) {
+    headers["X-CSRF-TOKEN"] = $('meta[name="csrf-token"]').attr("content");
+
+    return new Promise((onSuccess, onError) => {
         $.ajax({
-            url: url,
-            type: "GET",
-            headers: {
-                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-            },
+            url: form.attr("action") ,
+            type: form.attr("method"),
+            data: dataForm,
+            enctype: form.attr("enctype"),
+            headers: headers,
+            processData: false,
+            contentType: false,
             dataType: "json",
             success: function (data, status, xhr) {
-                $(".card-detail").html("");
-                let newDataDetail = "";
-                data.forEach(function (see, number) {
-                    newDataDetail += dataDetail;
-                });
-                $(".card-detail").html(newDataDetail);
-                data.forEach(function (see, number) {
-                    Object.keys(see).forEach(function (key) {
-                        replacePatternInNode($(".view-detail"),key, [see[key]]);
-                    });
+                onSuccess({
+                    data: data,
+                    status: status,
+                    xhr: xhr
                 });
             },
             error: function (data, status, xhr) {
-                showMsg(data, status);
-            },
+                onError({
+                    data: data,
+                    status: status,
+                    xhr: xhr
+                });
+            }
         });
-    }
-});
+    });
+}
 
 function ajaxCrud(form, view) {
     $(".error-message").remove();
     var dataForm = new FormData(form);
     form = $(form);
-    console.log(dataForm);
     $.ajax({
         url: form.attr("action"),
         type: form.attr("method"),
@@ -386,38 +377,8 @@ function replacePatternInNode(element, name, data) {
     handleNode(node);
 }
 
-// function replacePlaceholderWithData(name, data) {
-//     const placeholderRegex = new RegExp(`__${name}__`, "g");
-//     let dataIndex = 0; // Keep track of the current index in the loop
-
-//     // Select all elements within elements having class 'some-class'
-//     $('*').each(function() {
-//         // Replace placeholders in element text content
-//         $(this).contents().each(function () {
-//             if (this.nodeType === Node.TEXT_NODE) {
-//                 let content = $(this).text();
-//                 if (placeholderRegex.test(content) && dataIndex < data.length) {
-//                     content = content.replace(placeholderRegex, data[dataIndex]);
-//                     $(this).text(content);
-//                     dataIndex++; // Move to the next value in the loop
-//                 }
-//             }
-//         });
-
-//         // Replace placeholders in element attributes
-//         $.each(this.attributes, function () {
-//             if (placeholderRegex.test(this.value) && dataIndex < data.length) {
-//                 const updatedValue = this.value.replace(placeholderRegex, data[dataIndex]);
-//                 $(this.ownerElement).attr(this.name, updatedValue);
-//                 dataIndex++; // Move to the next value in the loop
-//             }
-//         });
-//     });
-// }
 
 
 $(window).on("resize", function () {
     datatable.columns.adjust();
 });
-
-// console.log();

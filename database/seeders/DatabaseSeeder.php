@@ -29,6 +29,15 @@ class DatabaseSeeder extends Seeder
                 "address"    => "alamat",
                 "is_active"  => rand(0,1),
             ]);
+            Experiment::create([
+                "name"       => fake()->name,
+                "religion"   => $religion[rand(0, 4)],
+                "picture"    => "picture-".rand(1,6).".jpg",
+                "score"      => rand(1,100),
+                "birth_date" => date("Y-m-d"),
+                "address"    => "alamat",
+                "is_active"  => rand(0,1),
+            ]);
         }
 
         User::factory()->create([

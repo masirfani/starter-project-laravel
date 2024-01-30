@@ -16,36 +16,32 @@ class ExperinmentController extends Controller
     public function index(Request $request)
     {
         // get data table ajax
-        if ($request->ajax()) {
-            return DataTables::of(Experiment::query()->orderBy('created_at', 'desc'))
-            ->addIndexColumn()
-            ->editColumn('status', function($see){
-                return ($see->is_active) ? '<span class="badge text-bg-success">Active</span>' : '<span class="badge text-bg-danger">No</span>';
-            })
-            ->rawColumns(['status'])
-            ->filterColumn('is_active', function($query, $keyword) {
-                if ($keyword == "active") {
-                    $query->where('is_active', 1);
-                }
-                if ($keyword == "no") {
-                    $query->where('is_active', 0);
-                }
-            })
-            ->toJson();
+        
+
+        if (!$request->ajax()) {
+    
+            return view('experiment.experiment',[
+                "route" => "experiment",
+                "config_table" => json_encode(Experiment::$config_table)
+            ]);
         }
 
-        $config_table = [
-            ['title' => 'No',   'data'  => 'DT_RowIndex', 'name' => 'id', 'searchable' => false, 'className' => 'dt-no text-center'],
-            ['title' => 'Nama', 'data'  => 'name',        'name' => 'name'],
-            ['title' => 'Agama', 'data' => 'religion',    'name' => 'religion'],
-            ['title' => 'Nilai', 'data' => 'score',       'name' => 'score'],
-            ['title' => 'Status', 'data' => 'status',     'name' => 'is_active'],
-        ];
+        return DataTables::of(Experiment::query()->orderBy('created_at', 'desc'))
+        ->addIndexColumn()
+        ->editColumn('status', function($see){
+            return ($see->is_active) ? '<span class="badge text-bg-success">Active</span>' : '<span class="badge text-bg-danger">No</span>';
+        })
+        ->rawColumns(['status'])
+        ->filterColumn('is_active', function($query, $keyword) {
+            if ($keyword == "active") {
+                $query->where('is_active', 1);
+            }
+            if ($keyword == "no") {
+                $query->where('is_active', 0);
+            }
+        })
+        ->toJson();
 
-        return view('experiment.experiment',[
-            "route" => "experiment",
-            "config_table" => json_encode($config_table)
-        ]);
     }
 
     /**

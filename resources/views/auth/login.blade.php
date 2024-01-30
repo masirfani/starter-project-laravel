@@ -9,8 +9,8 @@
                 <div class="auth-logo">
                     <a href="index.html"><img src="{{ asset('template-backend/assets/compiled/svg/logo.svg') }}" alt="Logo"></a>
                 </div>
-                <h1 class="auth-title">Log in.</h1>
-                <p class="auth-subtitle mb-5">Log in with your data that you entered during registration.</p>
+                <h1 class="auth-title">Betumbuk kita</h1>
+                <p class="auth-subtitle mb-5">Semangat TOD aku cupu</p>
 
                 <form action="{{ route('auth.authentication') }}" method="POST">
                     @csrf

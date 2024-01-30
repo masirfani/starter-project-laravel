@@ -239,6 +239,13 @@
 @endsection
 @push('script')
 <script>
+
+    // show default view
+    showView("data");
+
+    let dataForm = {
+        
+    };
     // all about clicked button
     // "button" : "view"
     // "button" : function(){}
@@ -246,35 +253,90 @@
     let dataButton = {
         ".btn-add"  : "form",
         ".btn-back" : "data",
-        ".btn-edit" : ["edit",
-            function() {
-                if (selectedId.length == 0) {
-                    showMsg("Pilih data dari table dulu!!!", "info");
-                } else if (selectedId.length > 1) {
-                    showMsg("Hanya bisa 1 data yang di edit", "info");
-                } else {
-                    showView("edit");
-                    let form = $(this).parents("form");
-                    let url = `${$(".route").html()}/${$(".selected-id").html()}`;
-                    $.ajax({
-                        url: url,
-                        type: "GET",
-                        headers: {
-                            "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
-                        },
-                        dataType: "json",
-                        success: function (data, status, xhr) {
-                            populateForm(data);
+        ".btn-edit" : function(button) {
+            if (selectedId.length == 0) {
+                showMsg("Pilih data dari table dulu!!!", "info");
+            } else if (selectedId.length > 1) {
+                showMsg("Hanya bisa 1 data yang di edit", "info");
+            } else {
+                showView("edit");
+                let form = $(button).parents("form");
+                let url = `${$(".route").html()}/${$(".selected-id").html()}`;
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                    },
+                    dataType: "json",
+                    success: function (data, status, xhr) {
+                        populateForm(data);
 
-                            $(".view-edit form").attr("action", url);
-                        },
-                        error: function (data, status, xhr) {
-                            showMsg(data, status);
-                        },
-                    });
-                }
+                        $(".view-edit form").attr("action", url);
+                    },
+                    error: function (data, status, xhr) {
+                        showMsg(data, status);
+                    },
+                });
             }
-        ]
+        },
+        ".btn-delete" : function (button) {
+            if (selectedId.length == 0) {
+                showMsg("Pilih data dari table dulu!!!", "info");
+            } else {
+                let form = $(button).parents("form");
+                console.log(form);
+                Swal.fire({
+                    title: "Apakah anda yakin",
+                    text: "Ingin menghapus semua data yang terpilih???",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#e74c3c",
+                    cancelButtonColor: "#34495e",
+                    confirmButtonText: "Iya",
+                    cancelButtonText: "Tidak",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            }
+        },
+        ".btn-detail" : function (button) {
+            if (selectedId.length == 0) {
+                showMsg("Pilih data dari table dulu!!!", "info");
+            } else {
+                showView("detail");
+                $(".card-detail").html(dataDetail);
+                let form = $(button).parents("form");
+                form.attr("action", "");
+                let url = `${$(".route").html()}/${$(".selected-id").html()}`;
+                $.ajax({
+                    url: url,
+                    type: "GET",
+                    headers: {
+                        "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+                    },
+                    dataType: "json",
+                    success: function (data, status, xhr) {
+                        $(".card-detail").html("");
+                        let newDataDetail = "";
+                        data.forEach(function (see, number) {
+                            newDataDetail += dataDetail;
+                        });
+                        $(".card-detail").html(newDataDetail);
+                        data.forEach(function (see, number) {
+                            Object.keys(see).forEach(function (key) {
+                                replacePatternInNode($(".view-detail"),key, [see[key]]);
+                            });
+                        });
+                    },
+                    error: function (data, status, xhr) {
+                        showMsg(data, status);
+                    },
+                });
+            }
+        }
     }
     buttonMove(dataButton);
 </script>
